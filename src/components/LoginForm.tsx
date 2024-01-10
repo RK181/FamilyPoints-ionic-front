@@ -1,5 +1,6 @@
 import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
+import { AuthApi, ValidationErrorResponse } from '../api';
 
 const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -14,12 +15,26 @@ const LoginForm: React.FC = () => {
         event.preventDefault();
 
         try {
+            var api = new AuthApi()
+
+            var response = await api.loginUser({ email: email, password: password})
+            
         /*await login({
             email,
             password
         });*/
-        } catch (e) {
-            setFormErrors(e);
+        } catch (error: any) {
+            if (error.response.status == 400) {
+                var err = error.response.data as ValidationErrorResponse ?? ''
+                setFormErrors(err.status +': '+ err.message +': '+ err.errors?.email);
+            }
+            
+            /*setFormErrors( (error.response &&
+                error.response.data &&
+                error.response.data.errors.email[0]) ||
+              error.message ||
+              error.toString());*/
+            
         }
     }
 
