@@ -1,60 +1,114 @@
-import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
+import { AuthApi, ValidationErrorResponse } from '../api';
 
 const LoginForm: React.FC = () => {
+    // Loading Animation
+    const [loading, setLoading] = useState<boolean>(false);
+    // Form variabels
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const [error, setError] = useState(null);
-    const [ formErrors, setFormErrors ] = useState<any>();
+    const [ formErrors, setFormErrors ] = useState<ValidationErrorResponse>();
+    // Validation variabels
+    const [isTouched, setIsTouched] = useState(false);
+    const [isValid, setIsValid] = useState<boolean>();
 
-    function login(params:any) {
-    }
-    
     const submit = async (event: any) => {
         event.preventDefault();
-        setFormErrors(password);
+        setLoading(true);
 
         try {
-        /*await signup({
-            name,
-            email,
-            password
-        });*/
-        } catch (e) {
-            setFormErrors(e);
+            var api = new AuthApi();
+            await api.signupUser({ name: name, email: email, password: password});
+            
+        } catch (error: any) {
+            if (error.response?.status == 400) {
+                var err = error.response.data as ValidationErrorResponse;
+                setFormErrors(err);
+            }
+            
+            /*setFormErrors( (error.response &&
+                error.response.data &&
+                error.response.data.errors.email[0]) ||
+              error.message ||
+              error.toString());*/
+            
+        } finally {
+            setLoading(false);
         }
     }
 
+    // VALIDATION
+    const validateEmail = (email: string) => {
+        return email.match(
+        /^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+        );
+    };
+
+    const validate = (ev: Event) => {
+        const value = (ev.target as HTMLInputElement).value;
+
+        setIsValid(undefined);
+
+        if (value === '') return;
+
+        validateEmail(value) !== null ? setIsValid(true) : setIsValid(false);
+    };
+
+    const markTouched = () => {
+        setIsTouched(true);
+    };
+
+
     return (
         <IonCardContent>
+            <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
             <form onSubmit={submit} >
-                <IonInput name="name" mode="md" fill="outline" labelPlacement="floating" label="Name" type="text" placeholder="name"
-                value={name}
-                onIonChange={(e) => setName(e.detail.value!)}
-                ></IonInput>
-                <IonInput name="email" mode="md" className="ion-margin-top" fill="outline" labelPlacement="floating" label="Email" type="email" placeholder="example@email.com"
-                value={email}
-                onIonChange={(e) => setEmail(e.detail.value!)}
-                ></IonInput>
-                <IonInput name="password" mode="md" className="ion-margin-top" fill="outline" labelPlacement="floating" label="Password" type="password" placeholder="password"
-                value={password} 
-                onIonChange={(e) => setPassword(e.detail.value!)}
+                <IonInput
+                    mode="md"
+                    type="text"
+                    fill="outline"
+                    label="Name"
+                    labelPlacement="floating"
+                    minlength={2}
+                    errorText={`${formErrors?.errors?.name ?? null}`} 
+                    onIonChange={(e) => setName(e.detail.value!)}
+                    placeholder="name"
+                    required
                 ></IonInput>
 
-                <IonItem color="danger">
-                <p className="Error" color="danger">
-                    werewer
-                        {formErrors ? (
-                        formErrors
-                        ): null}
-                    </p>
-                </IonItem>
-                <IonText color="danger" className="ion-padding-start">
-                    <small>ass</small>
-                </IonText>
-                
-                
+                <IonInput
+                    className={`ion-margin-top 
+                        ${isValid && 'ion-valid'} 
+                        ${isValid === false && 'ion-invalid'} 
+                        ${isTouched && 'ion-touched'}`}
+                    mode="md"
+                    type="email"
+                    fill="outline"
+                    label="Email"
+                    labelPlacement="floating"
+                    errorText={`${formErrors?.errors?.email ?? 'Invalid email'}`} 
+                    onIonInput={(e) => validate(e)}
+                    onIonBlur={() => markTouched()}
+                    onIonChange={(e) => setEmail(e.detail.value!)}
+                    placeholder="example@email.com"
+                    required
+                ></IonInput>
+
+                <IonInput
+                    className="ion-margin-top"
+                    mode="md"
+                    type="password"
+                    fill="outline"
+                    label="Password"
+                    labelPlacement="floating"
+                    minlength={2}
+                    errorText={`${formErrors?.errors?.password ?? null}`} 
+                    onIonChange={(e) => setPassword(e.detail.value!)}
+                    placeholder="password"
+                    required
+                ></IonInput>
             
                 
                 <IonButton type='submit' expand="block" className="ion-margin-top" >
