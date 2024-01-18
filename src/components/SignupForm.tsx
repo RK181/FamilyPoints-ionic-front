@@ -1,8 +1,12 @@
-import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonRedirect, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
+import { useApi } from '../context/ApiContext';
+import { useHistory } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
+    const {apiConf} = useApi();
+    const navigate = useHistory();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -19,9 +23,9 @@ const LoginForm: React.FC = () => {
         setLoading(true);
 
         try {
-            var api = new AuthApi();
+            var api = new AuthApi(apiConf);
             await api.signupUser({ name: name, email: email, password: password});
-            
+            navigate.push("/login");
         } catch (error: any) {
             if (error.response?.status == 400) {
                 var err = error.response.data as ValidationErrorResponse;
@@ -59,7 +63,6 @@ const LoginForm: React.FC = () => {
     const markTouched = () => {
         setIsTouched(true);
     };
-
 
     return (
         <IonCardContent>
