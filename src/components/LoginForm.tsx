@@ -1,8 +1,11 @@
 import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
+import { useApi } from '../context/ApiContext';
+import { Redirect } from 'react-router';
 
 const LoginForm: React.FC = () => {
+    const {isAuthenticated, apiConf, setSession} = useApi();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -18,10 +21,11 @@ const LoginForm: React.FC = () => {
         setLoading(true);
 
         try {
-            var api = new AuthApi();
+            var api = new AuthApi(apiConf);
             var response = await api.loginUser({ email: email, password: password});
-            //response.data.token;
-            
+            setSession!(true, response.data.token as string)
+            console.log('auth: ' + isAuthenticated + ' Token: ' + apiConf!.accessToken)
+
         } catch (error: any) {
             if (error.response?.status == 400) {
                 var err = error.response.data as ValidationErrorResponse;
@@ -48,11 +52,8 @@ const LoginForm: React.FC = () => {
 
     const validate = (ev: Event) => {
         const value = (ev.target as HTMLInputElement).value;
-
         setIsValid(undefined);
-
         if (value === '') return;
-
         validateEmail(value) !== null ? setIsValid(true) : setIsValid(false);
     };
 
@@ -63,6 +64,7 @@ const LoginForm: React.FC = () => {
     return (
         <IonCardContent>
             <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
+            <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <form onSubmit={submit} >
                 <IonInput
                     className={`
@@ -83,7 +85,9 @@ const LoginForm: React.FC = () => {
                 ></IonInput>
                 
                 <IonInput
-                    className="ion-margin-top"
+                    className={` ion-margin-top
+                    ${formErrors?.errors?.password ? 'ion-invalid' : null} 
+                    ${formErrors?.errors?.password ? 'ion-touched' : null}`}
                     mode="md"
                     type="password"
                     fill="outline"
@@ -95,6 +99,7 @@ const LoginForm: React.FC = () => {
                     placeholder="password"
                     required
                 ></IonInput>
+                <div>{formErrors?.errors?.password ?? null} </div>
                 
                 <IonButton type='submit' expand="block" className="ion-margin-top" >
                     Login

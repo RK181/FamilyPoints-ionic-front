@@ -116,7 +116,7 @@ const LoginForm: React.FC = () => {
                 </IonButton>
 
 
-                <IonButton routerLink="/" color={'secondary'} type="button" expand="block" className="ion-margin-top">
+                <IonButton routerLink="/login" color={'secondary'} type="button" expand="block" className="ion-margin-top">
                     Login
                 </IonButton>
             </form>
