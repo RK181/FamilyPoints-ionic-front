@@ -18,10 +18,10 @@ import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
-import { DUMMY_BASE_URL, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
+import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from './common';
 import type { RequestArgs } from './base';
 // @ts-ignore
-import { BASE_PATH, BaseAPI, operationServerMap } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
 /**
  * 
@@ -66,6 +66,55 @@ export interface AuthResponse {
      * @memberof AuthResponse
      */
     'token'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface Group
+ */
+export interface Group {
+    /**
+     * 
+     * @type {string}
+     * @memberof Group
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Group
+     */
+    'points_name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Group
+     */
+    'points_icon'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Group
+     */
+    'conf_t_approve'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Group
+     */
+    'conf_t_validate'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Group
+     */
+    'conf_t_invalidate'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Group
+     */
+    'conf_r_valiadte'?: boolean;
 }
 /**
  * 
@@ -147,6 +196,18 @@ export interface ValidationErrorResponseErrors {
      * @memberof ValidationErrorResponseErrors
      */
     'password'?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'points_name'?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'points_icon'?: Array<string>;
 }
 
 /**
@@ -192,6 +253,40 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        logoutUser: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/logout`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary SignUp user into the system
          * @param {User} [user] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -249,6 +344,18 @@ export const AuthApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async logoutUser(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.logoutUser(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.logoutUser']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary SignUp user into the system
          * @param {User} [user] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -282,6 +389,15 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * 
          * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        logoutUser(options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.logoutUser(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary SignUp user into the system
          * @param {User} [user] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -314,6 +430,17 @@ export class AuthApi extends BaseAPI {
     /**
      * 
      * @summary Logs user into the system
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public logoutUser(options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).logoutUser(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary SignUp user into the system
      * @param {User} [user] Update an existent pet in the store
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -321,6 +448,118 @@ export class AuthApi extends BaseAPI {
      */
     public signupUser(user?: User, options?: RawAxiosRequestConfig) {
         return AuthApiFp(this.configuration).signupUser(user, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * GroupApi - axios parameter creator
+ * @export
+ */
+export const GroupApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGroup: async (group?: Group, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/group/create`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(group, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * GroupApi - functional programming interface
+ * @export
+ */
+export const GroupApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = GroupApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createGroup(group?: Group, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createGroup(group, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['GroupApi.createGroup']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * GroupApi - factory interface
+ * @export
+ */
+export const GroupApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = GroupApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createGroup(group?: Group, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.createGroup(group, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * GroupApi - object-oriented interface
+ * @export
+ * @class GroupApi
+ * @extends {BaseAPI}
+ */
+export class GroupApi extends BaseAPI {
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {Group} [group] Create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GroupApi
+     */
+    public createGroup(group?: Group, options?: RawAxiosRequestConfig) {
+        return GroupApiFp(this.configuration).createGroup(group, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
