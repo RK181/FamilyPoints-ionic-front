@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
@@ -23,24 +23,33 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
+import {ApiProvider } from './context/ApiContext';
+import Group from './pages/Group';
+import Menu from './components/Menu';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/">
-          <Login />
-        </Route>
-        <Route exact path="/signup">
-          <SignUp />
-        </Route>
-      </IonRouterOutlet>
-    </IonReactRouter>
+      <IonReactRouter>
+        <ApiProvider >
+          <Menu />
+          <IonRouterOutlet id="main">
+            <Route exact path="/home">
+              <Home />
+            </Route>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/signup">
+              <SignUp />
+            </Route>
+            <Route exact path="/group">
+              <Group />
+            </Route>
+          </IonRouterOutlet>
+        </ApiProvider>
+      </IonReactRouter>
   </IonApp>
 );
 
