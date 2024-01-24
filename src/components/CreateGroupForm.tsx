@@ -1,7 +1,7 @@
 import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonPage, IonRow, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
-import { AuthApi, ValidationErrorResponse } from '../api';
-import { useApi } from '../context/ApiContext';
+import { AuthApi, GroupApi, ValidationErrorResponse } from '../api';
+import { useApi } from '../context/AppContext';
 import { logoIonic } from 'ionicons/icons';
 
 
@@ -12,7 +12,7 @@ const CreateGroupForm: React.FC = () => {
     // Form variabels
     const [name, setName] = useState<string>('');
     const [pointsName, setPointsName] = useState<string>('');
-    const [pointsIcon, setPointsIcon] = useState<string>('');
+    const [pointsIcon, setPointsIcon] = useState<string>('1');
     const [requireTaskApprove, setReqTApprove] = useState<boolean>(true);
     const [requireTaskValidation, setReqTValidation] = useState<boolean>(true);
     const [permiteTaskInValidation, setPerTInValidation] = useState<boolean>(true);
@@ -26,9 +26,18 @@ const CreateGroupForm: React.FC = () => {
         setLoading(true);
 
         try {
-            var api = new AuthApi(apiConf);
+            var api = new GroupApi(apiConf);
+            const response = await api.createGroup({
+                name: name, 
+                points_name: pointsName,
+                points_icon: pointsIcon,
+                conf_t_approve: requireTaskApprove,
+                conf_t_validate: requireTaskValidation,
+                conf_t_invalidate: permiteTaskInValidation,
+                conf_r_valiadte: requireRewardValidation
+            });
             
-
+            console.log("status:" + response.data.status + "| msg: " + response.data.message)
         } catch (error: any) {
             if (error.response?.status == 400) {
                 var err = error.response.data as ValidationErrorResponse;
@@ -105,6 +114,8 @@ const CreateGroupForm: React.FC = () => {
                         <IonToggle checked={requireRewardValidation} enableOnOffLabels={true} onIonChange={(e) => setReqRValidation(e.detail.checked!)}>Require Reward Validation</IonToggle>
                     </IonItem>
                 </IonItemGroup>
+                <div>{formErrors?.errors?.toString() ?? null} </div>
+
 
                 <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
                     Create Group
