@@ -22,9 +22,7 @@ export function AppProvider ({children}: any) {
 
     useEffect(() => {
         async function loadAccesToken() {
-            if (db == null) {
-                setDb(await ConnectDB("appStorage"));
-            }else{
+            if (db != null) {
                 const token = await db.get(TOKEN_KEY)!
 
                 if (token != null && token != "") {
@@ -32,6 +30,8 @@ export function AppProvider ({children}: any) {
                     setAuthState(true);
                     console.log(token)
                 }
+            }else{ 
+                setDb(await ConnectDB("appStorage"));
             }
         }
         loadAccesToken();
@@ -54,6 +54,6 @@ export function AppProvider ({children}: any) {
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-export const useApi = () => {
+export const useApp = () => {
     return useContext(AppContext);
 };
