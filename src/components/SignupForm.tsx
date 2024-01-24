@@ -1,7 +1,7 @@
 import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonRedirect, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../context/AppContext';
 import { useHistory } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
