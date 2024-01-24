@@ -1,11 +1,11 @@
 import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
-import { useApi } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 import { Redirect } from 'react-router';
 
 const LoginForm: React.FC = () => {
-    const {isAuthenticated, apiConf, setSession} = useApi();
+    const {isAuthenticated, apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels

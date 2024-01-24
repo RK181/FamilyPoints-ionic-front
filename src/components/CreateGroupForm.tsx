@@ -1,12 +1,12 @@
 import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonPage, IonRow, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, GroupApi, ValidationErrorResponse } from '../api';
-import { useApi } from '../context/AppContext';
+import { useApp } from '../context/AppContext';
 import { logoIonic } from 'ionicons/icons';
 
 
 const CreateGroupForm: React.FC = () => {
-    const {isAuthenticated, apiConf, setSession} = useApi();
+    const {isAuthenticated, apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
