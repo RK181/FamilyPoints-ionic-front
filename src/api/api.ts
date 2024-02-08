@@ -75,6 +75,12 @@ export interface AuthResponse {
 export interface Group {
     /**
      * 
+     * @type {number}
+     * @memberof Group
+     */
+    'id'?: number;
+    /**
+     * 
      * @type {string}
      * @memberof Group
      */
@@ -115,6 +121,80 @@ export interface Group {
      * @memberof Group
      */
     'conf_r_valiadte'?: boolean;
+    /**
+     * 
+     * @type {User}
+     * @memberof Group
+     */
+    'creator'?: User;
+    /**
+     * 
+     * @type {User}
+     * @memberof Group
+     */
+    'couple'?: User;
+}
+/**
+ * 
+ * @export
+ * @interface LoginUserRequest
+ */
+export interface LoginUserRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof LoginUserRequest
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'name'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof LoginUserRequest
+     */
+    'password': string;
+}
+/**
+ * 
+ * @export
+ * @interface SignupUserRequest
+ */
+export interface SignupUserRequest {
+    /**
+     * 
+     * @type {number}
+     * @memberof SignupUserRequest
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignupUserRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignupUserRequest
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignupUserRequest
+     */
+    'password': string;
 }
 /**
  * 
@@ -219,11 +299,11 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @summary Logs user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {LoginUserRequest} [loginUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        loginUser: async (user?: User, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        loginUser: async (loginUserRequest?: LoginUserRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/auth/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -243,7 +323,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(loginUserRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -287,11 +367,11 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
         /**
          * 
          * @summary SignUp user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {SignupUserRequest} [signupUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signupUser: async (user?: User, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        signupUser: async (signupUserRequest?: SignupUserRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/auth/signup`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -311,7 +391,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(user, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(signupUserRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -331,12 +411,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Logs user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {LoginUserRequest} [loginUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async loginUser(user?: User, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.loginUser(user, options);
+        async loginUser(loginUserRequest?: LoginUserRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AuthResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.loginUser(loginUserRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AuthApi.loginUser']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -356,12 +436,12 @@ export const AuthApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary SignUp user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {SignupUserRequest} [signupUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async signupUser(user?: User, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.signupUser(user, options);
+        async signupUser(signupUserRequest?: SignupUserRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.signupUser(signupUserRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AuthApi.signupUser']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -379,12 +459,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * 
          * @summary Logs user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {LoginUserRequest} [loginUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        loginUser(user?: User, options?: any): AxiosPromise<AuthResponse> {
-            return localVarFp.loginUser(user, options).then((request) => request(axios, basePath));
+        loginUser(loginUserRequest?: LoginUserRequest, options?: any): AxiosPromise<AuthResponse> {
+            return localVarFp.loginUser(loginUserRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -398,12 +478,12 @@ export const AuthApiFactory = function (configuration?: Configuration, basePath?
         /**
          * 
          * @summary SignUp user into the system
-         * @param {User} [user] Update an existent pet in the store
+         * @param {SignupUserRequest} [signupUserRequest] Update an existent pet in the store
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        signupUser(user?: User, options?: any): AxiosPromise<ApiResponse> {
-            return localVarFp.signupUser(user, options).then((request) => request(axios, basePath));
+        signupUser(signupUserRequest?: SignupUserRequest, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.signupUser(signupUserRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -418,13 +498,13 @@ export class AuthApi extends BaseAPI {
     /**
      * 
      * @summary Logs user into the system
-     * @param {User} [user] Update an existent pet in the store
+     * @param {LoginUserRequest} [loginUserRequest] Update an existent pet in the store
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public loginUser(user?: User, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).loginUser(user, options).then((request) => request(this.axios, this.basePath));
+    public loginUser(loginUserRequest?: LoginUserRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).loginUser(loginUserRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -441,13 +521,13 @@ export class AuthApi extends BaseAPI {
     /**
      * 
      * @summary SignUp user into the system
-     * @param {User} [user] Update an existent pet in the store
+     * @param {SignupUserRequest} [signupUserRequest] Update an existent pet in the store
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthApi
      */
-    public signupUser(user?: User, options?: RawAxiosRequestConfig) {
-        return AuthApiFp(this.configuration).signupUser(user, options).then((request) => request(this.axios, this.basePath));
+    public signupUser(signupUserRequest?: SignupUserRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).signupUser(signupUserRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -497,6 +577,112 @@ export const GroupApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGroup: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/group/delete`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGroup: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/group`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGroup: async (group?: Group, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/group/update`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(group, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -520,6 +706,43 @@ export const GroupApiFp = function(configuration?: Configuration) {
             const operationBasePath = operationServerMap['GroupApi.createGroup']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteGroup(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteGroup(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['GroupApi.deleteGroup']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGroup(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Group>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGroup(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['GroupApi.getGroup']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateGroup(group?: Group, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateGroup(group, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['GroupApi.updateGroup']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
     }
 };
 
@@ -539,6 +762,34 @@ export const GroupApiFactory = function (configuration?: Configuration, basePath
          */
         createGroup(group?: Group, options?: any): AxiosPromise<ApiResponse> {
             return localVarFp.createGroup(group, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteGroup(options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.deleteGroup(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGroup(options?: any): AxiosPromise<Group> {
+            return localVarFp.getGroup(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Group} [group] Update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateGroup(group?: Group, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.updateGroup(group, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -560,6 +811,225 @@ export class GroupApi extends BaseAPI {
      */
     public createGroup(group?: Group, options?: RawAxiosRequestConfig) {
         return GroupApiFp(this.configuration).createGroup(group, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GroupApi
+     */
+    public deleteGroup(options?: RawAxiosRequestConfig) {
+        return GroupApiFp(this.configuration).deleteGroup(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GroupApi
+     */
+    public getGroup(options?: RawAxiosRequestConfig) {
+        return GroupApiFp(this.configuration).getGroup(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {Group} [group] Update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof GroupApi
+     */
+    public updateGroup(group?: Group, options?: RawAxiosRequestConfig) {
+        return GroupApiFp(this.configuration).updateGroup(group, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * RewardApi - axios parameter creator
+ * @export
+ */
+export const RewardApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteReward: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteReward', 'id', id)
+            const localVarPath = `/reward/delete/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReward: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getReward', 'id', id)
+            const localVarPath = `/reward/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * RewardApi - functional programming interface
+ * @export
+ */
+export const RewardApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = RewardApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteReward(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteReward(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RewardApi.deleteReward']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getReward(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getReward(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RewardApi.getReward']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * RewardApi - factory interface
+ * @export
+ */
+export const RewardApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = RewardApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteReward(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.deleteReward(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getReward(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.getReward(id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * RewardApi - object-oriented interface
+ * @export
+ * @class RewardApi
+ * @extends {BaseAPI}
+ */
+export class RewardApi extends BaseAPI {
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the reward to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RewardApi
+     */
+    public deleteReward(id: number, options?: RawAxiosRequestConfig) {
+        return RewardApiFp(this.configuration).deleteReward(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the reward to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RewardApi
+     */
+    public getReward(id: number, options?: RawAxiosRequestConfig) {
+        return RewardApiFp(this.configuration).getReward(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
