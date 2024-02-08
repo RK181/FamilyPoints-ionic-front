@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
         );
     };
 
-    const validate = (ev: Event) => {
+    const validate = (ev: any) => {
         const value = (ev.target as HTMLInputElement).value;
 
         setIsValid(undefined);

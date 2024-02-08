@@ -2,9 +2,10 @@ import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading,
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
-import { Redirect } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 
 const LoginForm: React.FC = () => {
+    const navigate = useHistory();
     const {isAuthenticated, apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
@@ -25,6 +26,7 @@ const LoginForm: React.FC = () => {
             var response = await api.loginUser({ email: email, password: password});
             setSession!(true, response.data.token as string)
             console.log('auth: ' + isAuthenticated + ' Token: ' + apiConf!.accessToken)
+            navigate.push("/group");
 
         } catch (error: any) {
             if (error.response?.status == 400) {
@@ -50,7 +52,7 @@ const LoginForm: React.FC = () => {
         );
     };
 
-    const validate = (ev: Event) => {
+    const validate = (ev: any) => {
         const value = (ev.target as HTMLInputElement).value;
         setIsValid(undefined);
         if (value === '') return;
