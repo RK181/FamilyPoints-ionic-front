@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 import { logoIonic } from 'ionicons/icons';
 
 
-const CreateGroupForm: React.FC = () => {
+const GroupCreateForm: React.FC = () => {
     const {isAuthenticated, apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
@@ -126,4 +126,4 @@ const CreateGroupForm: React.FC = () => {
     );
 };
 
-export default CreateGroupForm;
+export default GroupCreateForm;
