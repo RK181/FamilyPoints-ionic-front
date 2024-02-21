@@ -8,19 +8,20 @@ import { AuthApi, Group, GroupApi } from '../api';
 import { useHistory } from 'react-router-dom';
 import GroupAddUserForm from './GroupAddUserForm';
 
+interface Props {
+    group: Group
+}
 
-const GroupInfo: React.FC = () => {
+const GroupInfo: React.FC<Props> = ({group}) => {
     const navigate = useHistory();
     const {apiConf, isAuthenticated} = useApp();
-    const [group, setGroup] = useState<Group>();
     const [tabs, settab] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
 
     useIonViewWillEnter(() => {
-        load();
-        console.log('ionViewDidEnter event fired');
+        console.log("group");
+        console.log(group);
     });
-      
+
     const change = async () => {
         if (tabs) {
             settab(false);
@@ -30,36 +31,8 @@ const GroupInfo: React.FC = () => {
         }
     }
 
-    const load = async () => {
-        setLoading(true);
-        
-        try {
-            var api = new GroupApi(apiConf);
-            var response = await api.getGroup();
-
-            setGroup(response.data)
-            console.log(response);
-
-        } catch (error: any) {
-            if (error.response?.status == 404) {
-                navigate.push("/login");
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
-        }finally {
-            setLoading(false);
-        }
-
-    }
-
-
-
     return (
         <IonCardContent>
-            <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-
             <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <IonItemDivider color="light" className="ion-margin-top">
                 <IonLabel>Participants</IonLabel>
