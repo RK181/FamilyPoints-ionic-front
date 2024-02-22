@@ -26,6 +26,11 @@ import SignUp from './pages/Signup';
 import {AppProvider } from './context/AppContext';
 import Group from './pages/Group';
 import Menu from './components/Menu';
+import GroupInfo from './components/GroupInfo';
+import GroupCreateForm from './components/GroupCreateForm';
+import GroupAddUserForm from './components/GroupAddUserForm';
+import RewardCreateForm from './components/RewardCreateForm';
+import RewardList from './components/RewardList';
 
 setupIonicReact();
 
@@ -46,6 +51,19 @@ const App: React.FC = () => (
           <Route exact path="/group">
             <Group />
           </Route>
+          <Route exact path="/groupform">
+            <GroupCreateForm />
+          </Route>
+          <Route exact path="/groupAddUser">
+            <GroupAddUserForm />
+          </Route>
+          <Route exact path="/rewardForm">
+            <RewardCreateForm />
+          </Route>
+          <Route exact path="/rewardList">
+            <RewardList />
+          </Route>
+
         </IonRouterOutlet>
       </IonReactRouter>
   </IonApp>
