@@ -80,8 +80,8 @@ const GroupAddUserForm: React.FC = () => {
                     <IonButtons slot="start">
                         <IonBackButton></IonBackButton>
                     </IonButtons>
-            <IonTitle>Add User</IonTitle>
-        </IonToolbar>
+                    <IonTitle>Add User</IonTitle>
+                </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
                 <IonCardContent>
