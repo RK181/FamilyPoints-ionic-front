@@ -68,7 +68,7 @@ const GroupInfo: React.FC<Props> = ({group}) => {
                     </IonButton>
                 </IonCol>
                 <IonCol>
-                    <IonButton type='button' expand="full" onClick={change}>
+                    <IonButton type='button' expand="full" routerLink="/rewardForm">
                         New Reward
                     </IonButton>
                 </IonCol>
@@ -81,7 +81,7 @@ const GroupInfo: React.FC<Props> = ({group}) => {
                     </IonButton>
                 </IonCol>
                 <IonCol>
-                    <IonButton type='button' expand="full" onClick={change}>
+                    <IonButton type='button' expand="full" routerLink="/rewardList">
                         Rewards
                     </IonButton>
                 </IonCol>
