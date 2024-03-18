@@ -248,6 +248,73 @@ export interface SignupUserRequest {
 /**
  * 
  * @export
+ * @interface Task
+ */
+export interface Task {
+    /**
+     * 
+     * @type {number}
+     * @memberof Task
+     */
+    'id'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'title'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Task
+     */
+    'reward'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    'expire_at'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Task
+     */
+    'approve'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Task
+     */
+    'complete'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Task
+     */
+    'validate'?: boolean;
+    /**
+     * 
+     * @type {User}
+     * @memberof Task
+     */
+    'creator'?: User;
+    /**
+     * 
+     * @type {User}
+     * @memberof Task
+     */
+    'user'?: User;
+}
+/**
+ * 
+ * @export
  * @interface User
  */
 export interface User {
@@ -394,7 +461,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1018,7 +1085,7 @@ export const RewardApiAxiosParamCreator = function (configuration?: Configuratio
         /**
          * 
          * @summary Logs user into the system
-         * @param {number} id Numeric ID of the reward to delete
+         * @param {number} id Numeric ID of the reward
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1035,6 +1102,82 @@ export const RewardApiAxiosParamCreator = function (configuration?: Configuratio
             }
 
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        redeemReward: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('redeemReward', 'id', id)
+            const localVarPath = `/reward/redeem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateReward: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('validateReward', 'id', id)
+            const localVarPath = `/reward/validate/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1104,7 +1247,7 @@ export const RewardApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Logs user into the system
-         * @param {number} id Numeric ID of the reward to delete
+         * @param {number} id Numeric ID of the reward
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -1112,6 +1255,32 @@ export const RewardApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getRewardById(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['RewardApi.getRewardById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async redeemReward(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.redeemReward(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RewardApi.redeemReward']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async validateReward(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateReward(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['RewardApi.validateReward']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -1156,12 +1325,32 @@ export const RewardApiFactory = function (configuration?: Configuration, basePat
         /**
          * 
          * @summary Logs user into the system
-         * @param {number} id Numeric ID of the reward to delete
+         * @param {number} id Numeric ID of the reward
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getRewardById(id: number, options?: any): AxiosPromise<Reward> {
             return localVarFp.getRewardById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        redeemReward(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.redeemReward(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateReward(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.validateReward(id, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1211,13 +1400,726 @@ export class RewardApi extends BaseAPI {
     /**
      * 
      * @summary Logs user into the system
-     * @param {number} id Numeric ID of the reward to delete
+     * @param {number} id Numeric ID of the reward
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof RewardApi
      */
     public getRewardById(id: number, options?: RawAxiosRequestConfig) {
         return RewardApiFp(this.configuration).getRewardById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the reward to approve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RewardApi
+     */
+    public redeemReward(id: number, options?: RawAxiosRequestConfig) {
+        return RewardApiFp(this.configuration).redeemReward(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the reward to validate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof RewardApi
+     */
+    public validateReward(id: number, options?: RawAxiosRequestConfig) {
+        return RewardApiFp(this.configuration).validateReward(id, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * TaskApi - axios parameter creator
+ * @export
+ */
+export const TaskApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        approveTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('approveTaskById', 'id', id)
+            const localVarPath = `/task/approve/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to complete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        completeTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('completeTaskById', 'id', id)
+            const localVarPath = `/task/complete/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTask: async (task?: Task, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/task/create`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(task, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the task to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('deleteTaskById', 'id', id)
+            const localVarPath = `/task/delete/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGroupTaskList: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/group/task/list`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getTaskById', 'id', id)
+            const localVarPath = `/task/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to inValidate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        inValidateTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('inValidateTaskById', 'id', id)
+            const localVarPath = `/task/invalidate/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTask: async (task?: Task, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/task/update`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(task, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateTaskById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('validateTaskById', 'id', id)
+            const localVarPath = `/task/validate/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TaskApi - functional programming interface
+ * @export
+ */
+export const TaskApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TaskApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async approveTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.approveTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.approveTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to complete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async completeTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.completeTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.completeTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createTask(task?: Task, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createTask(task, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.createTask']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the task to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async deleteTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.deleteTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.deleteTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getGroupTaskList(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Task>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGroupTaskList(options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.getGroupTaskList']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Task>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.getTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to inValidate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async inValidateTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.inValidateTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.inValidateTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateTask(task?: Task, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateTask(task, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.updateTask']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async validateTaskById(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ApiResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.validateTaskById(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['TaskApi.validateTaskById']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TaskApi - factory interface
+ * @export
+ */
+export const TaskApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TaskApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to approve
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        approveTaskById(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.approveTaskById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Aprueba la creacion de la tarea
+         * @param {number} id Numeric ID of the task to complete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        completeTaskById(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.completeTaskById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createTask(task?: Task, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.createTask(task, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the task to delete
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        deleteTaskById(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.deleteTaskById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getGroupTaskList(options?: any): AxiosPromise<Array<Task>> {
+            return localVarFp.getGroupTaskList(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {number} id Numeric ID of the reward
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getTaskById(id: number, options?: any): AxiosPromise<Task> {
+            return localVarFp.getTaskById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to inValidate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        inValidateTaskById(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.inValidateTaskById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Logs user into the system
+         * @param {Task} [task] Create
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateTask(task?: Task, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.updateTask(task, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Valida la completacion de la tarea
+         * @param {number} id Numeric ID of the completed task to validate
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        validateTaskById(id: number, options?: any): AxiosPromise<ApiResponse> {
+            return localVarFp.validateTaskById(id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * TaskApi - object-oriented interface
+ * @export
+ * @class TaskApi
+ * @extends {BaseAPI}
+ */
+export class TaskApi extends BaseAPI {
+    /**
+     * 
+     * @summary Aprueba la creacion de la tarea
+     * @param {number} id Numeric ID of the task to approve
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public approveTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).approveTaskById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Aprueba la creacion de la tarea
+     * @param {number} id Numeric ID of the task to complete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public completeTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).completeTaskById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {Task} [task] Create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public createTask(task?: Task, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).createTask(task, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the task to delete
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public deleteTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).deleteTaskById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public getGroupTaskList(options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).getGroupTaskList(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {number} id Numeric ID of the reward
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public getTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).getTaskById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Valida la completacion de la tarea
+     * @param {number} id Numeric ID of the completed task to inValidate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public inValidateTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).inValidateTaskById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Logs user into the system
+     * @param {Task} [task] Create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public updateTask(task?: Task, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).updateTask(task, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Valida la completacion de la tarea
+     * @param {number} id Numeric ID of the completed task to validate
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskApi
+     */
+    public validateTaskById(id: number, options?: RawAxiosRequestConfig) {
+        return TaskApiFp(this.configuration).validateTaskById(id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
