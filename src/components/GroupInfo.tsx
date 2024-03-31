@@ -22,15 +22,6 @@ const GroupInfo: React.FC<Props> = ({group}) => {
         console.log(group);
     });
 
-    const change = async () => {
-        if (tabs) {
-            settab(false);
-        }else{
-            settab(true);
-
-        }
-    }
-
     return (
         <IonCardContent>
             <div>Auth: {isAuthenticated ? 'true':'false'}</div>
@@ -63,7 +54,7 @@ const GroupInfo: React.FC<Props> = ({group}) => {
             <IonRow>
                 
                 <IonCol>
-                    <IonButton type='button' expand="full" onClick={change}>
+                    <IonButton type='button' expand="full" routerLink="/taskForm" >
                         New Task
                     </IonButton>
                 </IonCol>
@@ -76,7 +67,7 @@ const GroupInfo: React.FC<Props> = ({group}) => {
             </IonRow>
             <IonRow>
                 <IonCol>
-                    <IonButton type='button' expand="full" onClick={change}>
+                    <IonButton type='button' expand="full" routerLink="/taskList">
                         Tasks
                     </IonButton>
                 </IonCol>

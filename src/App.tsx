@@ -31,6 +31,8 @@ import GroupCreateForm from './components/GroupCreateForm';
 import GroupAddUserForm from './components/GroupAddUserForm';
 import RewardCreateForm from './components/RewardCreateForm';
 import RewardList from './components/RewardList';
+import TaskCreateForm from './components/TaskCreateForm';
+import TaskList from './components/TaskList';
 
 setupIonicReact();
 
@@ -62,6 +64,12 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/rewardList">
             <RewardList />
+          </Route>
+          <Route exact path="/taskForm">
+            <TaskCreateForm />
+          </Route>
+          <Route exact path="/taskList">
+            <TaskList />  
           </Route>
 
         </IonRouterOutlet>
