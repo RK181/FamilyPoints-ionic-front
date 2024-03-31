@@ -1,15 +1,15 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
-import { GroupApi, Group, User, ValidationErrorResponse, Reward, RewardApi } from '../api';
+import { ValidationErrorResponse, Reward, RewardApi } from '../api';
 import { useApp } from '../context/AppContext';
-import { format, parseISO, subDays } from 'date-fns';
-import { paw } from 'ionicons/icons';
+import RewardInfo from './RewardInfo';
 
 const RewardList: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf, isAuthenticated} = useApp();
+    const {apiConf} = useApp();
     const [rewardList, setRewardList] = useState<Reward[]>();
+    const [rewardSearchList, setSearchRewardList] = useState<Reward[]>();
     const [loading, setLoading] = useState<boolean>(true);
     
     useIonViewWillEnter(() => {
@@ -27,7 +27,8 @@ const RewardList: React.FC = () => {
             
             var response = await api.getGroupRewardList();
 
-            setRewardList(response.data)
+            setRewardList(response.data);
+            setSearchRewardList(response.data);
             console.log(response);
 
         } catch (error: any) {
@@ -48,6 +49,14 @@ const RewardList: React.FC = () => {
 
     }
 
+    const handleInput = (ev: Event) => {
+        let query = '';
+        const target = ev.target as HTMLIonSearchbarElement;
+        if (target) query = target.value!.toLowerCase();
+    
+        setSearchRewardList(rewardList!.filter((reward) => reward.title!.toLowerCase().indexOf(query) > -1));
+      };
+
     return (
         <IonPage>
             <IonHeader>
@@ -61,24 +70,25 @@ const RewardList: React.FC = () => {
             <IonContent className="ion-padding">
                 <IonCardContent>
                     <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-                    
-                    {rewardList?.map((reward) => {
+                    <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)}></IonSearchbar>
+                    {rewardSearchList?.map((reward) => {
                         return (
-                            <IonItem button routerDirection="none" lines="inset" detail={true}>
-                                <IonIcon aria-hidden="true" slot="start" icon={paw} />
-                                <IonLabel>
-                                    <h3>{reward.title}</h3>
-                                    <p>{reward.user?.name}</p>
-                                    <p>Reward: {reward.cost}</p>
-                                    
-                                </IonLabel>
-                                <IonNote slot='end' ><p>Expire: {reward.expire_at}</p></IonNote>
-                            </IonItem>
-                            
+                            <IonAccordionGroup expand="inset">
+                                <IonAccordion value={''+reward.id} >
+                                    <IonItem slot="header" color="primary" key={reward.id}>
+                                        <IonLabel>
+                                        <h3>{reward.title}</h3>
+                                        <small>Cost: {reward.cost}</small> <br/>
+                                        <small font-size="2">Expire: {reward.expire_at}</small>
+                                        </IonLabel>
+                                    </IonItem>
+                                    <div slot="content">
+                                        <RewardInfo reward={reward} />
+                                    </div>
+                                </IonAccordion>
+                            </IonAccordionGroup>
                         );
                     })}
-
-                    
                 </IonCardContent>
             </IonContent>
         </IonPage>
