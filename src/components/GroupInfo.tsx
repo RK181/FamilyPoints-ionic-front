@@ -1,12 +1,13 @@
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCol, IonContent, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonLabel, IonList, IonLoading, IonNav, IonNavLink, IonPage, IonRow, IonTabBar, IonTabButton, IonTabs, IonText, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { person, call, settings, airplane, bluetooth, wifi } from 'ionicons/icons';
+import { person, call, settings, airplane, bluetooth, wifi, settingsOutline } from 'ionicons/icons';
 import Login from '../pages/Login';
 import SignUp from '../pages/Signup';
 import { AuthApi, Group, GroupApi } from '../api';
 import { useHistory } from 'react-router-dom';
 import GroupAddUserForm from './GroupAddUserForm';
+import { getIcon } from '../constants/constants';
 
 interface Props {
     group: Group
@@ -15,7 +16,6 @@ interface Props {
 const GroupInfo: React.FC<Props> = ({group}) => {
     const navigate = useHistory();
     const {apiConf, isAuthenticated} = useApp();
-    const [tabs, settab] = useState<boolean>(false);
 
     useIonViewWillEnter(() => {
         console.log("group");
@@ -27,16 +27,21 @@ const GroupInfo: React.FC<Props> = ({group}) => {
             <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <IonItemDivider color="light" className="ion-margin-top">
                 <IonLabel>Participants</IonLabel>
+                <IonButton slot='end' fill="clear" color={'dark'}>
+                    <IonIcon icon={settingsOutline}></IonIcon>
+                </IonButton>
             </IonItemDivider>
             <IonList>
                 <IonItem>
-                    <IonLabel slot="start">{group?.creator?.name}</IonLabel>
-                    <IonLabel slot="end"><small>123 {group?.points_name}</small></IonLabel>
+                    <IonLabel>{group?.creator?.name}</IonLabel>
+                    <small>{group?.creator?.points +' '+ group?.points_name}</small>
+                    <IonIcon slot="end" src={getIcon(group.points_icon!)}></IonIcon>
                 </IonItem>
                 {group?.couple ?
                 <IonItem>
-                    <IonLabel slot="start">{group?.couple?.name}</IonLabel>
-                    <IonLabel slot="end"><small>123 {group?.points_name}</small></IonLabel>
+                    <IonLabel>{group?.couple?.name}</IonLabel>
+                    <small>{group.couple.points +' '+ group?.points_name}</small>
+                    <IonIcon slot="end" src={getIcon(group.points_icon!)}></IonIcon>
                 </IonItem>
                 :
                 <IonItem>
