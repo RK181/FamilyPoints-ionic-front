@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ConnectDB, TOKEN_KEY } from "../storage/Store";
+import { ConnectDB } from "../storage/Store";
 import { Configuration } from "../api/configuration";
 import { Database } from "@ionic/storage";
-
-const API_URL = "http://localhost:8000/api".replace(/\/+$/, "");
+import { API_URL, TOKEN_KEY } from "../constants/constants";
 
 interface AppProps {
     isAuthenticated?: boolean,

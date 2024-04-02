@@ -1,7 +1,5 @@
 import { Storage, Drivers } from "@ionic/storage";
 
-export const TOKEN_KEY = "accessToken";
-
 //let storage: Storage;
 /*
 export const CreateStore = (name: string) => {
