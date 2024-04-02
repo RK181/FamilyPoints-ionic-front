@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Task, TaskApi } from '../api';
 import { useApp } from '../context/AppContext';
-import { format, parseISO, subDays } from 'date-fns';
-import { paw, pin, share, trash } from 'ionicons/icons';
 import TaskInfo from './TaskInfo';
+import { logoIonic } from 'ionicons/icons';
 
 const TaskList: React.FC = () => {
     const navigate = useHistory();
@@ -60,6 +59,7 @@ const TaskList: React.FC = () => {
             var api = new TaskApi(apiConf);
             var response = await api.approveTaskById(id);
             console.log(response.data);
+            handleListChange(id, 'approve');
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -88,6 +88,7 @@ const TaskList: React.FC = () => {
             var api = new TaskApi(apiConf);
             var response = await api.completeTaskById(id);
             console.log(response.data);
+            handleListChange(id, 'complete');
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -116,6 +117,7 @@ const TaskList: React.FC = () => {
             var api = new TaskApi(apiConf);
             var response = await api.validateTaskById(id);
             console.log(response.data);
+            handleListChange(id, 'validate');
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -144,6 +146,7 @@ const TaskList: React.FC = () => {
             var api = new TaskApi(apiConf);
             var response = await api.inValidateTaskById(id);
             console.log(response.data);
+            handleListChange(id, 'invalidate');
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -172,6 +175,7 @@ const TaskList: React.FC = () => {
             var api = new TaskApi(apiConf);
             var response = await api.deleteTaskById(id);
             console.log(response.data);
+            handleListChange(id, 'remove');
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -190,6 +194,56 @@ const TaskList: React.FC = () => {
         }
 
     }
+
+    const handleListChange = (id: number, action: string) => {
+        switch (action) {
+            case 'approve':
+                setSearchTaskList(taskList!.map(task => {
+                    if (task.id === id) {
+                        task.approve = true;
+                        return task;
+                    } else {
+                        return task;
+                    }
+                }));
+                break;
+            case 'complete':
+                setSearchTaskList(taskList!.map(task => {
+                    if (task.id === id) {
+                        task.complete = true;
+                        return task;
+                    } else {
+                        return task;
+                    }
+                }));
+                break;
+            case 'validate':
+                setSearchTaskList(taskList!.map(task => {
+                    if (task.id === id) {
+                        task.validate = true;
+                        return task;
+                    } else {
+                        return task;
+                    }
+                }));
+                break;
+            case 'invalidate':
+                setSearchTaskList(taskList!.map(task => {
+                    if (task.id === id) {
+                        task.complete = false;
+                        task.validate = false;
+                        return task;
+                    } else {
+                        return task;
+                    }
+                }));
+                break;
+            case 'remove':
+                setSearchTaskList(taskList!.filter((task) => task.id! !== id));
+                break;
+        }  
+    };
+
     const handleInput = (ev: Event) => {
         let query = '';
         const target = ev.target as HTMLIonSearchbarElement;
@@ -213,17 +267,17 @@ const TaskList: React.FC = () => {
                 <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)}></IonSearchbar>
                 {taskSearchList?.map((task) => {
                     return (
-                        <IonAccordionGroup expand="inset">
-                            <IonAccordion value={''+task.id} >
+                        <IonAccordionGroup expand="inset" key={task.id}>
+                            <IonAccordion>
                                 <IonItem slot="header" color="primary">
                                     <IonLabel>
                                     <h3>{task.title}</h3>
-                                    <small>Reward: {task.reward}</small> <br/>
+                                    <small>Reward: {task.reward} <IonIcon icon={logoIonic}></IonIcon></small> <br/>
                                     <small font-size="2">Expire: {task.expire_at}</small>
                                     </IonLabel>
                                 </IonItem>
                                 <div slot="content">
-                                    <TaskInfo task={task} />
+                                    <TaskInfo task={task} approve={approve} complete={complite} validate={validate} invalidate={inValidate} remove={remove} />
                                 </div>
                             </IonAccordion>
                         </IonAccordionGroup>
