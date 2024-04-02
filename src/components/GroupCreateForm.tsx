@@ -1,8 +1,10 @@
-import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonPage, IonRow, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
-import React, { useState } from 'react';
+import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
+import React, { useRef, useState } from 'react';
 import { AuthApi, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
-import { logoIonic } from 'ionicons/icons';
+import { logoIonic, personCircle } from 'ionicons/icons';
+import './GroupCreateForm.css';
+import { appIcons } from '../constants/constants';
 
 
 const GroupCreateForm: React.FC = () => {
@@ -17,6 +19,8 @@ const GroupCreateForm: React.FC = () => {
     const [requireTaskValidation, setReqTValidation] = useState<boolean>(true);
     const [permiteTaskInValidation, setPerTInValidation] = useState<boolean>(true);
     const [requireRewardValidation, setReqRValidation] = useState<boolean>(true);
+    const modal = useRef<HTMLIonModalElement>(null);
+    const [selectedIcon, setSelectedIcon] = useState('');
 
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
 
@@ -54,11 +58,8 @@ const GroupCreateForm: React.FC = () => {
             setLoading(false);
         }
     }
-
-    const test =async (e:any) => {
-        console.log(e)
-    }
     
+
     return (
         <IonRow class="ion-justify-content-center">
             <IonCol size="auto">
@@ -91,13 +92,25 @@ const GroupCreateForm: React.FC = () => {
                             required
                         ></IonInput>
                     </IonItem>
-                    <IonItem>
-                        <IonSelect label="Icon" placeholder="select icon" onIonChange={(e) => setPointsIcon(e.detail.value!)}>
-                            <IonSelectOption value="1">icon 1</IonSelectOption>
-                            <IonSelectOption value="2">icon 2</IonSelectOption>
-                            <IonSelectOption value="3">icon 3</IonSelectOption>
-                        </IonSelect>
+                    <IonItem button id="open-custom-dialog">
+                        <IonLabel>Icon:</IonLabel>
+                        {selectedIcon ?
+                        <IonIcon src={selectedIcon}></IonIcon>
+                        :
+                        <IonNote slot='end'>select icon</IonNote>
+                        }
                     </IonItem>
+                    <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
+                        <div className="wrapper">
+                            <IonList lines="none">
+                                {appIcons.map((icon, index) => (
+                                    <IonItem key={index} button={true} detail={false} onClick={() => {setSelectedIcon(icon.img); modal.current?.dismiss(); }}>
+                                        <IonIcon src={icon.img} />
+                                    </IonItem>
+                                ))}
+                            </IonList>
+                        </div>
+                    </IonModal>
                     <IonItemDivider color="light" className="ion-margin-top">
                         <IonLabel>Settings</IonLabel>
                     </IonItemDivider>
