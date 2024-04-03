@@ -1,6 +1,6 @@
 import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
-import { AuthApi, ValidationErrorResponse } from '../api';
+import { ApiResponse, AuthApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
 import { Redirect, useHistory } from 'react-router';
 
@@ -13,6 +13,7 @@ const LoginForm: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
+    const [formErrors401, setFormErrors401] = useState<string>('');
     // Validation variabels
     const [isTouched, setIsTouched] = useState(false);
     const [isValid, setIsValid] = useState<boolean>();
@@ -20,26 +21,31 @@ const LoginForm: React.FC = () => {
     const submit = async (event: any) => {
         event.preventDefault();
         setLoading(true);
+        setFormErrors(undefined);
+        setFormErrors401('');
 
         try {
             var api = new AuthApi(apiConf);
             var response = await api.loginUser({ email: email, password: password});
-            setSession!(true, response.data.token as string)
+            setSession!(true, response.data.token as string, email)
             console.log('auth: ' + isAuthenticated + ' Token: ' + apiConf!.accessToken)
+            // Redirect to group page
             navigate.push("/group");
 
         } catch (error: any) {
-            if (error.response?.status == 400) {
-                var err = error.response.data as ValidationErrorResponse;
-                setFormErrors(err);
+            switch (error.response?.status) {
+                case 400:
+                    var err = error.response.data as ValidationErrorResponse;
+                    setFormErrors(err);
+                    break;
+                case 401:
+                    var err401 = error.response.data as ApiResponse;
+                    setFormErrors401(err401.message!);
+                    break;
+                default:
+                    // Handle other cases if needed
+                    break;
             }
-            
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
-            
         } finally {
             setLoading(false);
         }
@@ -66,42 +72,46 @@ const LoginForm: React.FC = () => {
     return (
         <IonCardContent>
             <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-            <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <form onSubmit={submit} >
                 <IonInput
                     className={`
                         ${isValid && 'ion-valid'} 
                         ${isValid === false && 'ion-invalid'} 
-                        ${isTouched && 'ion-touched'}`}
+                        ${isTouched && 'ion-touched'}
+                        ${formErrors?.errors?.email ? 'ion-invalid ion-touched' : null} 
+                        ${formErrors401 ? 'ion-invalid ion-touched' : null}`}
                     mode="md"
                     type="email"
                     fill="outline"
-                    label="Email"
+                    label="Email*"
                     labelPlacement="floating"
-                    errorText={`${formErrors?.errors?.email ?? 'Invalid email'}`} 
-                    onIonInput={(e) => validate(e)}
+                    errorText={`${formErrors?.errors?.email ?? (formErrors401 ? '' : 'Invalid email')}`} 
+                    onIonInput={(e) => {validate(e); setEmail(e.detail.value!); setFormErrors401(''); setFormErrors(undefined);}}
                     onIonBlur={() => markTouched()}
-                    onIonChange={(e) => setEmail(e.detail.value!)}
+                    //onIonChange={(e) => setEmail(e.detail.value!)}
                     placeholder="example@email.com"
                     required
                 ></IonInput>
                 
                 <IonInput
+                id='password'
                     className={` ion-margin-top
-                    ${formErrors?.errors?.password ? 'ion-invalid' : null} 
-                    ${formErrors?.errors?.password ? 'ion-touched' : null}`}
+                    ${formErrors?.errors?.password ? 'ion-invalid ion-touched' : null} 
+                    ${formErrors401 ? 'ion-invalid ion-touched' : null}`}
                     mode="md"
                     type="password"
                     fill="outline"
-                    label="Password"
+                    label="Password*"
                     labelPlacement="floating"
                     minlength={2}
-                    errorText={`${formErrors?.errors?.password ?? null}`} 
-                    onIonChange={(e) => setPassword(e.detail.value!)}
+                    errorText={`${formErrors?.errors?.password ?? ''}`} 
+                    onIonInput={(e) => {setPassword(e.detail.value!); setFormErrors401(''); setFormErrors(undefined);}}
+                    //onIonChange={(e) => setPassword(e.detail.value!)}
                     placeholder="password"
                     required
                 ></IonInput>
-                <div>{formErrors?.errors?.password ?? null} </div>
+
+                <IonText className='ion-margin-top' color="danger">{formErrors401 ?? ''}</IonText>
                 
                 <IonButton type='submit' expand="block" className="ion-margin-top" >
                     Login
