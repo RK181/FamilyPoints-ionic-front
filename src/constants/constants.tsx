@@ -1,6 +1,8 @@
 // APP constants
 const API_URL = "http://localhost:8000/api".replace(/\/+$/, "");
 const TOKEN_KEY = "accessToken";
+const AUTH_EMAIL_KEY = "authEmail";
+const DB_NAME = "appStorage";
 
 const appIcons = [
     { name: '1', img: '/coins/coconut.svg' },
@@ -15,4 +17,4 @@ const getIcon = (name: string) => {
     return appIcons.find((icon) => icon.name == name)?.img;
 }
 
-export { API_URL, TOKEN_KEY, appIcons, getIcon };
+export { API_URL, DB_NAME, TOKEN_KEY, AUTH_EMAIL_KEY, appIcons, getIcon };
