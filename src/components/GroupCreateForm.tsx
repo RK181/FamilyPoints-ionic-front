@@ -4,7 +4,7 @@ import { AuthApi, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
 import { logoIonic, personCircle } from 'ionicons/icons';
 import './GroupCreateForm.css';
-import { appIcons } from '../constants/constants';
+import { appIcons, getIcon } from '../constants/constants';
 
 
 const GroupCreateForm: React.FC = () => {
@@ -47,6 +47,12 @@ const GroupCreateForm: React.FC = () => {
                 setFormErrors(err);
             }
             
+            /*setFormErrors( (error.response &&
+                error.response.data &&
+                error.response.data.errors.email[0]) ||
+              error.message ||
+              error.toString());*/
+            
         } finally {
             setLoading(false);
         }
@@ -88,7 +94,7 @@ const GroupCreateForm: React.FC = () => {
                     <IonItem button id="open-custom-dialog">
                         <IonLabel>Icon:</IonLabel>
                         {pointsIcon ?
-                        <IonIcon src={pointsIcon}></IonIcon>
+                        <IonIcon src={getIcon(pointsIcon)}></IonIcon>
                         :
                         <IonNote slot='end'>select icon</IonNote>
                         }
@@ -97,7 +103,7 @@ const GroupCreateForm: React.FC = () => {
                         <div className="wrapper">
                             <IonList lines="none">
                                 {appIcons.map((icon, index) => (
-                                    <IonItem key={index} button={true} detail={false} onClick={() => {setPointsIcon(icon.img); modal.current?.dismiss(); }}>
+                                    <IonItem key={index} button={true} detail={false} onClick={() => {setPointsIcon(icon.name), modal.current?.dismiss(); }}>
                                         <IonIcon src={icon.img} />
                                     </IonItem>
                                 ))}
