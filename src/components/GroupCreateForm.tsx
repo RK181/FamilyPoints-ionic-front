@@ -5,10 +5,13 @@ import { useApp } from '../context/AppContext';
 import { logoIonic, personCircle } from 'ionicons/icons';
 import './GroupCreateForm.css';
 import { appIcons, getIcon } from '../constants/constants';
+import { useHistory } from 'react-router';
 
 
 const GroupCreateForm: React.FC = () => {
-    const {isAuthenticated, apiConf, setSession} = useApp();
+    const navigate = useHistory();
+
+    const {apiConf} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -41,6 +44,8 @@ const GroupCreateForm: React.FC = () => {
             });
             
             console.log("status:" + response.data.status + "| msg: " + response.data.message)
+            navigate.push("/groups");
+
         } catch (error: any) {
             if (error.response?.status == 400) {
                 var err = error.response.data as ValidationErrorResponse;
