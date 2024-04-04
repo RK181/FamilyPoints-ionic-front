@@ -83,12 +83,11 @@ const LoginForm: React.FC = () => {
                     mode="md"
                     type="email"
                     fill="outline"
-                    label="Email*"
+                    label="Email"
                     labelPlacement="floating"
                     errorText={`${formErrors?.errors?.email ?? (formErrors401 ? '' : 'Invalid email')}`} 
                     onIonInput={(e) => {validate(e); setEmail(e.detail.value!); setFormErrors401(''); setFormErrors(undefined);}}
                     onIonBlur={() => markTouched()}
-                    //onIonChange={(e) => setEmail(e.detail.value!)}
                     placeholder="example@email.com"
                     required
                 ></IonInput>
@@ -101,23 +100,21 @@ const LoginForm: React.FC = () => {
                     mode="md"
                     type="password"
                     fill="outline"
-                    label="Password*"
+                    label="Password"
                     labelPlacement="floating"
                     minlength={2}
                     errorText={`${formErrors?.errors?.password ?? ''}`} 
                     onIonInput={(e) => {setPassword(e.detail.value!); setFormErrors401(''); setFormErrors(undefined);}}
-                    //onIonChange={(e) => setPassword(e.detail.value!)}
                     placeholder="password"
                     required
                 ></IonInput>
-
-                <IonText className='ion-margin-top' color="danger">{formErrors401 ?? ''}</IonText>
+                <IonText className='ion-margin-top' color="danger">
+                    {formErrors401 ?? ''}
+                </IonText>
                 
                 <IonButton type='submit' expand="block" className="ion-margin-top" >
                     Login
                 </IonButton>
-
-
                 <IonButton routerLink="/signup" color={'secondary'} type="button" expand="block" className="ion-margin-top">
                     Create account
                 </IonButton>
