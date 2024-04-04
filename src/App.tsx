@@ -1,4 +1,4 @@
-import { Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
@@ -23,58 +23,77 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import Login from './pages/Login';
 import SignUp from './pages/Signup';
-import {AppProvider } from './context/AppContext';
+import {useApp } from './context/AppContext';
 import Group from './pages/Group';
 import Menu from './components/Menu';
-import GroupInfo from './components/GroupInfo';
 import GroupCreateForm from './components/GroupCreateForm';
 import GroupAddUserForm from './components/GroupAddUserForm';
 import RewardCreateForm from './components/RewardCreateForm';
-import RewardList from './components/RewardList';
 import TaskCreateForm from './components/TaskCreateForm';
-import TaskList from './components/TaskList';
+import Rewards from './pages/Rewards';
+import Tasks from './pages/Tesks';
+import GroupUpdateForm from './components/GroupUpdateForm';
+
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-      <IonReactRouter>
-        <Menu />
-        <IonRouterOutlet id="main">
-          <Route exact path="/home">
-            <Home />
-          </Route>
-          <Route exact path="/login">
-            <Login />
-          </Route>
-          <Route exact path="/signup">
-            <SignUp />
-          </Route>
-          <Route exact path="/group">
-            <Group />
-          </Route>
-          <Route exact path="/groupform">
-            <GroupCreateForm />
-          </Route>
-          <Route exact path="/groupAddUser">
-            <GroupAddUserForm />
-          </Route>
-          <Route exact path="/rewardForm">
-            <RewardCreateForm />
-          </Route>
-          <Route exact path="/rewardList">
-            <RewardList />
-          </Route>
-          <Route exact path="/taskForm">
-            <TaskCreateForm />
-          </Route>
-          <Route exact path="/taskList">
-            <TaskList />  
-          </Route>
+const App: React.FC = () => {
+  const {isAuthenticated} = useApp();
 
-        </IonRouterOutlet>
-      </IonReactRouter>
-  </IonApp>
-);
+  return (
+    <IonApp>
+        <IonReactRouter>
+          <Menu />
+          <IonRouterOutlet id="main">
+
+            <Route exact path="/signup">
+              <SignUp />
+            </Route>
+
+            <Route exact path="/" render={() => {
+              return isAuthenticated ? <Group /> : <Login />;
+            }} />
+            
+            <Route exact path="/login" render={() => {
+              return isAuthenticated ? <Group /> : <Login />;
+            }} />
+            
+            <Route exact path="/group" render={() => {
+              return isAuthenticated ? <Group /> : <Login />;
+            }} />
+
+            <Route exact path="/groupform" render={() => {
+              return isAuthenticated ? <GroupCreateForm /> : <Login />;
+            }} />
+
+            <Route exact path="/groupUpdateForm" render={() => {
+              return isAuthenticated ? <GroupUpdateForm /> : <Login />;
+            }} />
+
+            <Route exact path="/groupAddUser" render={() => {
+              return isAuthenticated ? <GroupAddUserForm /> : <Login />;
+            }} />
+
+            <Route exact path="/rewardForm" render={() => {
+              return isAuthenticated ? <RewardCreateForm /> : <Login />;
+            }} />
+
+            <Route exact path="/rewards" render={() => {
+              return isAuthenticated ? <Rewards /> : <Login />;
+            }} />
+
+            <Route exact path="/taskForm" render={() => {
+              return isAuthenticated ? <TaskCreateForm /> : <Login />;
+            }} />
+
+            <Route exact path="/tasks" render={() => {
+              return isAuthenticated ? <Tasks /> : <Login />;
+            }} />
+
+          </IonRouterOutlet>
+        </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
