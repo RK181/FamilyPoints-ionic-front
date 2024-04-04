@@ -47,12 +47,6 @@ const GroupCreateForm: React.FC = () => {
                 setFormErrors(err);
             }
             
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
-            
         } finally {
             setLoading(false);
         }
