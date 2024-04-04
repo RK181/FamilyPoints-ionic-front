@@ -20,7 +20,6 @@ const GroupCreateForm: React.FC = () => {
     const [permiteTaskInValidation, setPerTInValidation] = useState<boolean>(true);
     const [requireRewardValidation, setReqRValidation] = useState<boolean>(true);
     const modal = useRef<HTMLIonModalElement>(null);
-    const [selectedIcon, setSelectedIcon] = useState('');
 
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
 
@@ -47,12 +46,6 @@ const GroupCreateForm: React.FC = () => {
                 var err = error.response.data as ValidationErrorResponse;
                 setFormErrors(err);
             }
-            
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
             
         } finally {
             setLoading(false);
@@ -94,8 +87,8 @@ const GroupCreateForm: React.FC = () => {
                     </IonItem>
                     <IonItem button id="open-custom-dialog">
                         <IonLabel>Icon:</IonLabel>
-                        {selectedIcon ?
-                        <IonIcon src={selectedIcon}></IonIcon>
+                        {pointsIcon ?
+                        <IonIcon src={pointsIcon}></IonIcon>
                         :
                         <IonNote slot='end'>select icon</IonNote>
                         }
@@ -104,7 +97,7 @@ const GroupCreateForm: React.FC = () => {
                         <div className="wrapper">
                             <IonList lines="none">
                                 {appIcons.map((icon, index) => (
-                                    <IonItem key={index} button={true} detail={false} onClick={() => {setSelectedIcon(icon.img); modal.current?.dismiss(); }}>
+                                    <IonItem key={index} button={true} detail={false} onClick={() => {setPointsIcon(icon.img); modal.current?.dismiss(); }}>
                                         <IonIcon src={icon.img} />
                                     </IonItem>
                                 ))}
