@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { AuthApi, Group, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
@@ -22,6 +22,7 @@ const GroupUpdateForm: React.FC = () => {
     const [requireRewardValidation, setReqRValidation] = useState<boolean>(true);
     const modal = useRef<HTMLIonModalElement>(null);
 
+    const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
 
     useIonViewWillEnter(() => {
@@ -83,6 +84,22 @@ const GroupUpdateForm: React.FC = () => {
                 var err = error.response.data as ValidationErrorResponse;
                 setFormErrors(err);
             }
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const deleteGroup = async () => {
+        setLoading(true);
+
+        try {
+            var api = new GroupApi(apiConf);
+            const response = await api.deleteGroup();
+            
+            console.log("status:" + response.data.status + "| msg: " + response.data.message)
+            navigate.push("/group");
+        } catch (error: any) {
+            console.log("error:" + error.response?.status )
         } finally {
             setLoading(false);
         }
@@ -172,6 +189,34 @@ const GroupUpdateForm: React.FC = () => {
                         <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
                             Update Group
                         </IonButton>
+                        <IonButton
+                            expand="block"
+                            color="danger"
+                            className="ion-margin-top"
+                            onClick={() => setShowConfirmation(true)}
+                        >
+                            Delete Group
+                        </IonButton>
+
+                        <IonAlert
+                            isOpen={showConfirmation}
+                            onDidDismiss={() => setShowConfirmation(false)}
+                            header="Confirmation"
+                            message="Are you sure you want to delete this group?"
+                            buttons={[
+                                {
+                                    text: "Cancel",
+                                    role: "cancel",
+                                    cssClass: "secondary",
+                                },
+                                {
+                                    text: "Delete",
+                                    handler: () => {
+                                        deleteGroup();
+                                    },
+                                },
+                            ]}
+                        />
                     </form>
                     </IonCol>
                 </IonRow>
