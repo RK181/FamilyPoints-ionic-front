@@ -1,11 +1,12 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
-import React, { useState } from 'react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Task, TaskApi } from '../api';
 import { useApp } from '../context/AppContext';
 import TaskInfo from './TaskInfo';
 import { filterSharp } from 'ionicons/icons';
 import { getIcon } from '../constants/constants';
+import './List.css';
 
 const TaskList: React.FC = () => {
     const navigate = useHistory();
@@ -14,6 +15,7 @@ const TaskList: React.FC = () => {
     const [taskSearchList, setSearchTaskList] = useState<Task[]>();
     const [loading, setLoading] = useState<boolean>(true);
     const [group, setGroup] = useState<Group>();
+    const modal = useRef<HTMLIonModalElement>(null);
 
     
     useIonViewWillEnter(() => {
@@ -258,7 +260,30 @@ const TaskList: React.FC = () => {
         if (target) query = target.value!.toLowerCase();
     
         setSearchTaskList(taskList!.filter((reward) => reward.title!.toLowerCase().indexOf(query) > -1));
-      };
+    };
+
+    const filterList = (type: string) => {
+        switch (type) {
+            case 'myTasks':
+                setSearchTaskList(taskList!.filter((task) => task.user?.email === authEmail));
+                break;
+            case 'coupleTasks':
+                setSearchTaskList(taskList!.filter((task) => task.user?.email !== authEmail));
+                break;
+            case 'waitApproval':
+                setSearchTaskList(taskList!.filter((task) => task.approve === false));
+                break;
+            case 'waitComplete':
+                setSearchTaskList(taskList!.filter((task) => (task.approve === true && task.complete === false)));
+                break;
+            case 'waitValidate':
+                setSearchTaskList(taskList!.filter((task) => (task.approve === true && task.complete === true && task.validate === false)));
+                break;
+            case 'all':
+                setSearchTaskList(taskList);
+                break;
+        }
+    };
 
     return (
         <IonPage>
@@ -271,7 +296,34 @@ const TaskList: React.FC = () => {
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)} ></IonSearchbar>
-                    <IonButton slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
+                    <IonButton id="open-custom-dialog" slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
+                    <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
+                        <div className="wrapper">
+                            <IonItemDivider color="light" className="ion-margin-button">
+                                <IonLabel><h3>Filter by</h3></IonLabel>
+                            </IonItemDivider>
+                            <IonList>
+                                <IonItem button detail={false} onClick={() => {filterList('myTasks'), modal.current?.dismiss(); }}>
+                                    <IonLabel>My tasks</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('coupleTasks'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Couple tasks</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('waitApproval'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Wait approval</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('waitComplete'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Wait complete</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('waitValidate'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Wait validate</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('all'), modal.current?.dismiss(); }}>
+                                    <IonLabel>All</IonLabel>
+                                </IonItem>
+                            </IonList>
+                        </div>
+                    </IonModal>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">

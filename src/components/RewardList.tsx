@@ -1,11 +1,12 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
-import React, { useState } from 'react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { ValidationErrorResponse, Reward, RewardApi, Group, GroupApi, User } from '../api';
 import { useApp } from '../context/AppContext';
 import RewardInfo from './RewardInfo';
 import { filterSharp } from 'ionicons/icons';
 import { getIcon } from '../constants/constants';
+import './List.css';
 
 const RewardList: React.FC = () => {
     const navigate = useHistory();
@@ -15,6 +16,7 @@ const RewardList: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [group, setGroup] = useState<Group>();
     const [currentUser, setCurrentUser] = useState<User>();
+    const modal = useRef<HTMLIonModalElement>(null);
 
     useIonViewWillEnter(() => {
         load();
@@ -173,6 +175,29 @@ const RewardList: React.FC = () => {
         setSearchRewardList(rewardList!.filter((reward) => reward.title!.toLowerCase().indexOf(query) > -1));
     };
 
+    const filterList = (filter: string) => {
+        switch (filter) {
+            case 'waitRedeem':
+                setSearchRewardList(rewardList!.filter((reward) => reward.redeem == false));
+                break;
+            case 'waitValidate':
+                setSearchRewardList(rewardList!.filter((reward) => (reward.redeem == true && reward.validate == false)));
+                break;
+            case 'redeemedAndValidated':
+                setSearchRewardList(rewardList!.filter((reward) => (reward.redeem == true && reward.validate == true)));
+                break;
+            case 'myRewards':
+                setSearchRewardList(rewardList!.filter((reward) => reward.user?.email == authEmail));
+                break;
+            case 'coupleRewards':
+                setSearchRewardList(rewardList!.filter((reward) => reward.user?.email != authEmail));
+                break;
+            case 'all':
+                setSearchRewardList(rewardList);
+                break;
+        }
+    };
+
     return (
         <IonPage>
             <IonHeader>
@@ -184,7 +209,34 @@ const RewardList: React.FC = () => {
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)} ></IonSearchbar>
-                    <IonButton slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
+                    <IonButton id="open-custom-dialog" slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
+                    <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
+                        <div className="wrapper">
+                            <IonItemDivider color="light" className="ion-margin-button">
+                                <IonLabel><h3>Filter by</h3></IonLabel>
+                            </IonItemDivider>
+                            <IonList>
+                                <IonItem button detail={false} onClick={() => {filterList('myRewards'), modal.current?.dismiss(); }}>
+                                    <IonLabel>My rewards</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('coupleRewards'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Couple rewards</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('waitRedeem'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Waiting to redeem</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('waitValidate'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Waiting to validate</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('redeemedAndValidated'), modal.current?.dismiss(); }}>
+                                    <IonLabel>Redeemed and validated</IonLabel>
+                                </IonItem>
+                                <IonItem button detail={false} onClick={() => {filterList('all'), modal.current?.dismiss(); }}>
+                                    <IonLabel>All</IonLabel>
+                                </IonItem>
+                            </IonList>
+                        </div>
+                    </IonModal>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
