@@ -1,9 +1,11 @@
 import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonItem, IonItemDivider, IonLabel, IonNote, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import React from 'react';
-import { Task } from '../api';
+import { Group, Task } from '../api';
 import './TaskInfo.css'
+import { useApp } from '../context/AppContext';
 
 interface Props {
+    group: Group
     task: Task
     approve: (id: number) => Promise<void>
     complete: (id: number) => Promise<void>
@@ -12,7 +14,8 @@ interface Props {
     remove: (id: number) => Promise<void>
 }
 
-const TaskInfo: React.FC<Props> = ({task, approve, complete, validate, invalidate, remove }) => {
+const TaskInfo: React.FC<Props> = ({group, task, approve, complete, validate, invalidate, remove }) => {
+    const {authEmail} = useApp();
 
     return (
         <IonCard>
@@ -39,13 +42,15 @@ const TaskInfo: React.FC<Props> = ({task, approve, complete, validate, invalidat
             <IonItem>
                 <IonButton slot="end" color={'danger'} onClick={() => remove(task.id!)}>Delete</IonButton>
 
-                {!task.approve ? <IonButton color={'secondary'} onClick={() => approve(task.id!)} >Approve</IonButton> 
+                {!task.approve ? (task.creator?.email != authEmail || !group.conf_t_approve ? <IonButton color={'secondary'} onClick={() => approve(task.id!)} >Approve</IonButton> 
+                                    : <p>Waiting approval</p>)  
                 :
                 !task.complete ? <IonButton color={'success'} onClick={() => complete(task.id!)}>Complete</IonButton>
                 :
-                !task.validate ? <IonButton color={'tertiary'} onClick={() => validate(task.id!)}>Validate</IonButton>
+                !task.validate ? (task.user?.email != authEmail || !group.conf_t_validate ? <IonButton color={'tertiary'} onClick={() => validate(task.id!)}>Validate</IonButton>
+                                    : <p>Waiting validation</p>)
                 : 
-                <IonButton color={'warning'} onClick={() => invalidate(task.id!)}>Invalidate</IonButton>}
+                group.conf_t_invalidate ? <IonButton color={'warning'} onClick={() => invalidate(task.id!)}>Invalidate</IonButton> : <p>Validated</p>}
             </IonItem>
         </IonCard>
     );
