@@ -5,7 +5,9 @@ const AUTH_EMAIL_KEY = "authEmail";
 const DB_NAME = "appStorage";
 
 const appIcons = [
+    // default icon
     { name: '1', img: '/coins/coconut.svg' },
+    // other icons
     { name: 'eur', img: '/coins/coin-e.svg' },
     { name: 'dolar', img: '/coins/coin-s.svg' },
     { name: 'mops', img: '/coins/dog-mops.svg' },
