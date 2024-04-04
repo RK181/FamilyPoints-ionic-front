@@ -24,10 +24,9 @@ const GroupInfo: React.FC<Props> = ({group}) => {
 
     return (
         <IonCardContent>
-            <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <IonItemDivider color="light" className="ion-margin-top">
                 <IonLabel>Participants</IonLabel>
-                <IonButton slot='end' fill="clear" color={'dark'}>
+                <IonButton type='button' slot='end' fill="clear" color={'dark'} routerLink="/groupUpdateForm">
                     <IonIcon icon={settingsOutline}></IonIcon>
                 </IonButton>
             </IonItemDivider>
@@ -72,12 +71,12 @@ const GroupInfo: React.FC<Props> = ({group}) => {
             </IonRow>
             <IonRow>
                 <IonCol>
-                    <IonButton type='button' expand="full" routerLink="/taskList">
+                    <IonButton type='button' expand="full" routerLink="/tasks">
                         Tasks
                     </IonButton>
                 </IonCol>
                 <IonCol>
-                    <IonButton type='button' expand="full" routerLink="/rewardList">
+                    <IonButton type='button' expand="full" routerLink="/rewards" >
                         Rewards
                     </IonButton>
                 </IonCol>
