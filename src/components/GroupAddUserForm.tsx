@@ -37,13 +37,7 @@ const GroupAddUserForm: React.FC = () => {
                 var err = error.response.data as ValidationErrorResponse;
                 setFormErrors(err);
             }
-        console.log(error);
-            
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
+            console.log(error);
             
         } finally {
             setLoading(false);
@@ -86,7 +80,6 @@ const GroupAddUserForm: React.FC = () => {
             <IonContent className="ion-padding">
                 <IonCardContent>
                     <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-                    <div>Auth: {isAuthenticated ? 'true':'false'}</div>
                     <form onSubmit={submit} >
                         <IonInput
                             className={`

@@ -57,7 +57,6 @@ const GroupCreateForm: React.FC = () => {
         <IonRow class="ion-justify-content-center">
             <IonCol size="auto">
             <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-            <div>Auth: {isAuthenticated ? 'true':'false'}</div>
             <form onSubmit={submit} >
                 <IonInput
                     mode="md"
