@@ -93,9 +93,9 @@ const GroupAddUserForm: React.FC = () => {
                             label="Email"
                             labelPlacement="floating"
                             errorText={`${formErrors?.errors['couple.email'] ?? 'Invalid email'}`} 
-                            onIonInput={(e) => validate(e)}
+                            onIonInput={(e) => {validate(e); setEmailError(e.detail.value!)}}
                             onIonBlur={() => markTouched()}
-                            onIonChange={(e) => setEmailError(e.detail.value!)}
+                            //onIonChange={(e) => setEmailError(e.detail.value!)}
                             placeholder="example@email.com"
                             required
                         ></IonInput>
