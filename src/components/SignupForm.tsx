@@ -32,12 +32,6 @@ const LoginForm: React.FC = () => {
                 setFormErrors(err);
             }
             
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
-            
         } finally {
             setLoading(false);
         }
@@ -52,9 +46,7 @@ const LoginForm: React.FC = () => {
 
     const validate = (ev: any) => {
         const value = (ev.target as HTMLInputElement).value;
-
         setIsValid(undefined);
-
         if (value === '') return;
 
         validateEmail(value) !== null ? setIsValid(true) : setIsValid(false);
@@ -76,7 +68,7 @@ const LoginForm: React.FC = () => {
                     labelPlacement="floating"
                     minlength={2}
                     errorText={`${formErrors?.errors?.name ?? null}`} 
-                    onIonChange={(e) => setName(e.detail.value!)}
+                    onIonInput={(e) => setName(e.detail.value!)}
                     placeholder="name"
                     required
                 ></IonInput>
@@ -92,9 +84,8 @@ const LoginForm: React.FC = () => {
                     label="Email"
                     labelPlacement="floating"
                     errorText={`${formErrors?.errors?.email ?? 'Invalid email'}`} 
-                    onIonInput={(e) => validate(e)}
+                    onIonInput={(e) => {validate(e); setEmail(e.detail.value!);}}
                     onIonBlur={() => markTouched()}
-                    onIonChange={(e) => setEmail(e.detail.value!)}
                     placeholder="example@email.com"
                     required
                 ></IonInput>
@@ -108,7 +99,7 @@ const LoginForm: React.FC = () => {
                     labelPlacement="floating"
                     minlength={2}
                     errorText={`${formErrors?.errors?.password ?? null}`} 
-                    onIonChange={(e) => setPassword(e.detail.value!)}
+                    onIonInput={(e) => setPassword(e.detail.value!)}
                     placeholder="password"
                     required
                 ></IonInput>

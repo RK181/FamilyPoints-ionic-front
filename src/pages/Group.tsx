@@ -24,7 +24,6 @@ const Group: React.FC = () => {
         
         try {
             console.log('Senging recuest');
-            
             var api = new GroupApi(apiConf);
             
             var response = await api.getGroup();

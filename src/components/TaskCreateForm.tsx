@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, TaskApi } from '../api';
@@ -26,7 +26,6 @@ const TaskCreateForm: React.FC = () => {
 
         try {
             var api = new TaskApi(apiConf);
-            //console.log(format(parseISO(expire), 'dd/MM/yyyy'));
 
             await api.createTask({
                 title: title,
@@ -34,7 +33,7 @@ const TaskCreateForm: React.FC = () => {
                 reward: reward,
                 expire_at: format(parseISO(expire), 'dd/MM/yyyy')
             });
-            //navigate.push("/group/reward/list");
+            navigate.push("/group");
 
         } catch (error: any) {
             if (error.response?.status == 400) {
@@ -42,12 +41,6 @@ const TaskCreateForm: React.FC = () => {
                 setFormErrors(err);
             }
             console.log(error);
-            
-            /*setFormErrors( (error.response &&
-                error.response.data &&
-                error.response.data.errors.email[0]) ||
-              error.message ||
-              error.toString());*/
             
         } finally {
             setLoading(false);
@@ -70,7 +63,6 @@ const TaskCreateForm: React.FC = () => {
                     <IonRow >
                         <IonCol >
                         <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-                        <div>Auth: {isAuthenticated ? 'true':'false'}</div>
                         <form onSubmit={submit} >
                             <IonInput
                                 mode="md"
@@ -78,7 +70,7 @@ const TaskCreateForm: React.FC = () => {
                                 fill="outline"
                                 label="Title"
                                 labelPlacement="floating"
-                                onIonChange={(e) => setTitle(e.detail.value!)}
+                                onIonInput={(e) => setTitle(e.detail.value!)}
                                 //placeholder=""
                                 required
                             ></IonInput>
@@ -89,7 +81,7 @@ const TaskCreateForm: React.FC = () => {
                                 fill="outline"
                                 label="Description"
                                 labelPlacement="floating"
-                                onIonChange={(e) => setDescription(e.detail.value!)}
+                                onIonInput={(e) => setDescription(e.detail.value!)}
                                 //placeholder=""
                                 required
                             ></IonInput>
@@ -100,7 +92,7 @@ const TaskCreateForm: React.FC = () => {
                                 fill="outline"
                                 label="Reward"
                                 labelPlacement="floating"
-                                onIonChange={(e) => setReward(e.detail.value as any)}
+                                onIonInput={(e) => setReward(e.detail.value as any)}
                                 placeholder="123"
                                 required
                             ></IonInput>
@@ -111,7 +103,7 @@ const TaskCreateForm: React.FC = () => {
                             </IonModal>
 
                             
-                            <div>{formErrors?.errors?.toString() ?? null} </div>
+                            <IonText color={'danger'}>{formErrors?.errors?.toString() ?? ''} </IonText>
 
 
                             <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
