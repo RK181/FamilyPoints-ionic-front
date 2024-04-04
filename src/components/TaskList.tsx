@@ -4,14 +4,17 @@ import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Task, TaskApi } from '../api';
 import { useApp } from '../context/AppContext';
 import TaskInfo from './TaskInfo';
-import { logoIonic } from 'ionicons/icons';
+import { filterSharp } from 'ionicons/icons';
+import { getIcon } from '../constants/constants';
 
 const TaskList: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf, isAuthenticated} = useApp();
+    const {apiConf, authEmail} = useApp();
     const [taskList, setTaskList] = useState<Task[]>();
     const [taskSearchList, setSearchTaskList] = useState<Task[]>();
     const [loading, setLoading] = useState<boolean>(true);
+    const [group, setGroup] = useState<Group>();
+
     
     useIonViewWillEnter(() => {
         load();
@@ -23,14 +26,15 @@ const TaskList: React.FC = () => {
         
         try {
             console.log('Senging recuest');
+            var api = new GroupApi(apiConf);
+            var response = await api.getGroup();
+            setGroup(response.data);
             
-            var api = new TaskApi(apiConf);
-            
-            var response = await api.getGroupTaskList();
-
-            setTaskList(response.data);
-            setSearchTaskList(response.data);
-            console.log(response);
+            var apiT = new TaskApi(apiConf);
+            var responseT = await apiT.getGroupTaskList();
+            setTaskList(responseT.data);
+            setSearchTaskList(responseT.data);
+            console.log(responseT);
 
         } catch (error: any) {
             console.log("Key:" +apiConf!.accessToken);
@@ -210,6 +214,10 @@ const TaskList: React.FC = () => {
             case 'complete':
                 setSearchTaskList(taskList!.map(task => {
                     if (task.id === id) {
+                        if (group?.conf_t_validate === false) {
+                            task.validate = true;
+                        }
+                        task.user!.email = authEmail; 
                         task.complete = true;
                         return task;
                     } else {
@@ -261,23 +269,26 @@ const TaskList: React.FC = () => {
                     </IonButtons>
                     <IonTitle>Task List</IonTitle>
                 </IonToolbar>
+                <IonToolbar>
+                    <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)} ></IonSearchbar>
+                    <IonButton slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
+                </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
                 <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
-                <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)}></IonSearchbar>
                 {taskSearchList?.map((task) => {
                     return (
                         <IonAccordionGroup expand="inset" key={task.id}>
                             <IonAccordion>
-                                <IonItem slot="header" color="primary">
+                                <IonItem slot="header" color={task.user?.email == authEmail ? "secondary" : "light"}>
                                     <IonLabel>
                                     <h3>{task.title}</h3>
-                                    <small>Reward: {task.reward} <IonIcon icon={logoIonic}></IonIcon></small> <br/>
-                                    <small font-size="2">Expire: {task.expire_at}</small>
+                                    <small>Reward: {task.reward} <IonIcon src={getIcon(group?.points_icon!)}></IonIcon></small> <br/>
+                                    <small>Expire: {task.expire_at}</small>
                                     </IonLabel>
                                 </IonItem>
                                 <div slot="content">
-                                    <TaskInfo task={task} approve={approve} complete={complite} validate={validate} invalidate={inValidate} remove={remove} />
+                                    <TaskInfo group={group!} task={task} approve={approve} complete={complite} validate={validate} invalidate={inValidate} remove={remove} />
                                 </div>
                             </IonAccordion>
                         </IonAccordionGroup>
