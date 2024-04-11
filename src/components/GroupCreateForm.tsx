@@ -44,7 +44,7 @@ const GroupCreateForm: React.FC = () => {
             });
             
             console.log("status:" + response.data.status + "| msg: " + response.data.message)
-            navigate.push("/groups");
+            navigate.push("/group");
 
         } catch (error: any) {
             if (error.response?.status == 400) {
