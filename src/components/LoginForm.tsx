@@ -78,8 +78,8 @@ const LoginForm: React.FC = () => {
                         ${isValid && 'ion-valid'} 
                         ${isValid === false && 'ion-invalid'} 
                         ${isTouched && 'ion-touched'}
-                        ${formErrors?.errors?.email ? 'ion-invalid ion-touched' : null} 
-                        ${formErrors401 ? 'ion-invalid ion-touched' : null}`}
+                        ${formErrors?.errors?.email ? 'ion-invalid ion-touched' : ''} 
+                        ${formErrors401 ? 'ion-invalid ion-touched' : ''}`}
                     mode="md"
                     type="email"
                     fill="outline"
