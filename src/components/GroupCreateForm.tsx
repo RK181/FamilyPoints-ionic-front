@@ -64,13 +64,17 @@ const GroupCreateForm: React.FC = () => {
             <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
             <form onSubmit={submit} >
                 <IonInput
+                    className={`
+                    ${formErrors?.errors?.name ? 'ion-invalid ion-touched' : null}
+                    `}
                     mode="md"
                     type="text"
                     fill="outline"
                     label="Group Name"
                     labelPlacement="floating"
-                    onIonChange={(e) => setName(e.detail.value!)}
+                    onIonInput={(e) => setName(e.detail.value!)}
                     //placeholder=""
+                    errorText={`${formErrors?.errors?.name ?? ''} `} 
                     required
                 ></IonInput>
 
@@ -80,16 +84,20 @@ const GroupCreateForm: React.FC = () => {
                     </IonItemDivider>
                     <IonItem>
                         <IonInput
+                            className={`
+                            ${formErrors?.errors?.points_name ? 'ion-invalid ion-touched' : null}
+                            `}
                             mode="md"
                             type="text"
                             label="Points Name:"
                             //labelPlacement="floating"
-                            onIonChange={(e) => setPointsName(e.detail.value!)}
+                            onIonInput={(e) => setPointsName(e.detail.value!)}
                             placeholder="..."
+                            errorText={`${formErrors?.errors?.points_name ?? ''} `} 
                             required
                         ></IonInput>
                     </IonItem>
-                    <IonItem button id="open-custom-dialog">
+                    <IonItem button id="open-custom-dialog" className='ion-invalid ion-touched'> 
                         <IonLabel>Icon:</IonLabel>
                         {pointsIcon ?
                         <IonIcon src={getIcon(pointsIcon)}></IonIcon>
@@ -97,7 +105,7 @@ const GroupCreateForm: React.FC = () => {
                         <IonNote slot='end'>select icon</IonNote>
                         }
                     </IonItem>
-                    <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
+                    <IonModal id='select-modal-icon' ref={modal} trigger="open-custom-dialog">
                         <div className="wrapper">
                             <IonList lines="none">
                                 {appIcons.map((icon, index) => (
@@ -124,7 +132,7 @@ const GroupCreateForm: React.FC = () => {
                         <IonToggle checked={requireRewardValidation} enableOnOffLabels={true} onIonChange={(e) => setReqRValidation(e.detail.checked!)}>Require Reward Validation</IonToggle>
                     </IonItem>
                 </IonItemGroup>
-                <div>{formErrors?.errors?.toString() ?? null} </div>
+                <div>{formErrors?.errors?.points_name?.toString() ?? null} </div>
 
 
                 <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >

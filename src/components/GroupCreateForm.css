@@ -1,4 +1,4 @@
-ion-modal#select-modal {
+ion-modal#select-modal-icon {
     --width: fit-content;
     --min-width: 50px;
     --height: fit-content;
@@ -6,11 +6,11 @@ ion-modal#select-modal {
     --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
   }
   
-  ion-modal#select-modal h1 {
+  ion-modal#select-modal-icon h1 {
     margin: 20px 20px 10px 20px;
   }
   
-  ion-modal#select-modal ion-icon {
+  ion-modal#select-modal-icon ion-icon {
     margin-right: 0px;
     
     width: 48px;
@@ -21,6 +21,6 @@ ion-modal#select-modal {
     color: #aaaaaa;
   }
   
-  ion-modal#select-modal .wrapper {
+  ion-modal#select-modal-icon .wrapper {
     margin-bottom: 10px;
   }
