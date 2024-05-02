@@ -128,7 +128,7 @@ const GroupUpdateForm: React.FC = () => {
                             fill="outline"
                             label="Group Name"
                             labelPlacement="floating"
-                            onIonChange={(e) => setName(e.detail.value!)}
+                            onIonInput={(e) => setName(e.detail.value!)}
                             value={name}
                             required
                         ></IonInput>
@@ -142,7 +142,7 @@ const GroupUpdateForm: React.FC = () => {
                                     mode="md"
                                     type="text"
                                     label="Points Name:"
-                                    onIonChange={(e) => setPointsName(e.detail.value!)}
+                                    onIonInput={(e) => setPointsName(e.detail.value!)}
                                     placeholder="..."
                                     value={pointsName}
                                     required
@@ -156,7 +156,7 @@ const GroupUpdateForm: React.FC = () => {
                                 <IonNote slot='end'>select icon</IonNote>
                                 }
                             </IonItem>
-                            <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
+                            <IonModal id='select-modal-icon' ref={modal} trigger="open-custom-dialog">
                                 <div className="wrapper">
                                     <IonList lines="none">
                                         {appIcons.map((icon, index) => (
