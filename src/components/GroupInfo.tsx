@@ -24,11 +24,14 @@ const GroupInfo: React.FC<Props> = ({group}) => {
 
     return (
         <IonCardContent>
-            <IonItemDivider color="light" className="ion-margin-top">
-                <IonLabel>Participants</IonLabel>
+            <IonItem>
+                <IonLabel>{group?.name}</IonLabel>
                 <IonButton type='button' slot='end' fill="clear" color={'dark'} routerLink="/groupUpdateForm">
                     <IonIcon icon={settingsOutline}></IonIcon>
                 </IonButton>
+            </IonItem>
+            <IonItemDivider color="light" className="ion-margin-top">
+                <IonLabel>Participants</IonLabel>
             </IonItemDivider>
             <IonList>
                 <IonItem>
