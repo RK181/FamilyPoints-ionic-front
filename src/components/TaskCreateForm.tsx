@@ -15,7 +15,7 @@ const TaskCreateForm: React.FC = () => {
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [reward, setReward] = useState<number>(0);
-    const [expire, setExpire] = useState<string>("1990-01-01");
+    const [expire, setExpire] = useState<string>("");
     const [formErrors, setFormErrors] = useState<any>();
 
     const submit = async (event: any) => {
@@ -31,7 +31,7 @@ const TaskCreateForm: React.FC = () => {
                 title: title,
                 description: description,
                 reward: reward,
-                expire_at: format(parseISO(expire), 'dd/MM/yyyy')
+                expire_at: format(parseISO(expire === "" ? minDate : expire), 'dd/MM/yyyy')
             });
             navigate.push("/group");
 
@@ -99,7 +99,7 @@ const TaskCreateForm: React.FC = () => {
                             <IonDatetimeButton datetime="datetime" className="ion-margin-top"></IonDatetimeButton>
 
                             <IonModal keepContentsMounted={true}>
-                            <IonDatetime id="datetime" presentation="date" min={minDate as string}	onIonChange={(e) => setExpire(e.detail.value as string)} ></IonDatetime>
+                            <IonDatetime id="datetime" presentation="date" value={minDate as string }  min={minDate as string} onIonChange={(e) => setExpire(e.detail.value as string)} ></IonDatetime>
                             </IonModal>
 
                             
