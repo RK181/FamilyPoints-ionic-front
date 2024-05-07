@@ -1,4 +1,4 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonBackButton, IonButton, IonButtons, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useApp } from '../context/AppContext';
@@ -15,8 +15,13 @@ const GroupAddUserForm: React.FC = () => {
     // Validation variabels
     const [isTouched, setIsTouched] = useState(false);
     const [isValid, setIsValid] = useState<boolean>();
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
 
     const submit = async (event: any) => {
+        setFormErrors(null);
         event.preventDefault();
         setLoading(true);
         console.log('ionViewDidEnter event fired');
@@ -24,13 +29,11 @@ const GroupAddUserForm: React.FC = () => {
 
         try {
             var api = new GroupApi(apiConf);
-            var group: Group;
-            var couple: User;
-            couple = {email: email};
-            group = {couple: couple};
 
-            await api.updateGroup(group);
-            navigate.push("/group");
+            var response = await api.inviteToGroup(email);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
 
         } catch (error: any) {
             if (error.response?.status == 400) {
@@ -74,7 +77,7 @@ const GroupAddUserForm: React.FC = () => {
                     <IonButtons slot="start">
                         <IonBackButton></IonBackButton>
                     </IonButtons>
-                    <IonTitle>Add User</IonTitle>
+                    <IonTitle>Invite User</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
@@ -84,7 +87,7 @@ const GroupAddUserForm: React.FC = () => {
                         <IonInput
                             className={`
                                 ${isValid && 'ion-valid'} 
-                                ${(isValid === false || formErrors?.errors['couple.email'] != null) && 'ion-invalid'} 
+                                ${(isValid === false || formErrors?.errors['email'] != null) && 'ion-invalid'} 
                                 ${isTouched && 'ion-touched'}
                                 `}
                             mode="md"
@@ -92,7 +95,7 @@ const GroupAddUserForm: React.FC = () => {
                             fill="outline"
                             label="Email"
                             labelPlacement="floating"
-                            errorText={`${formErrors?.errors['couple.email'] ?? 'Invalid email'}`} 
+                            errorText={`${formErrors?.errors['email'] ?? 'Invalid email'}`} 
                             onIonInput={(e) => {validate(e); setEmailError(e.detail.value!)}}
                             onIonBlur={() => markTouched()}
                             //onIonChange={(e) => setEmailError(e.detail.value!)}
@@ -101,10 +104,17 @@ const GroupAddUserForm: React.FC = () => {
                         ></IonInput>
                         
                         <IonButton type='submit' expand="block" className="ion-margin-top" >
-                            Add User
+                            Invite User
                         </IonButton>
                     </form>
                 </IonCardContent>
+                <IonToast
+                    isOpen={toastOpen}
+                    message={toastMessage}
+                    color={toastColor}
+                    onDidDismiss={() => setToastOpen(false)}
+                    duration={5000}
+                ></IonToast>
             </IonContent>
         </IonPage>
     );
