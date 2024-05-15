@@ -1,7 +1,6 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import Home from './pages/Home';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -26,7 +25,6 @@ import SignUp from './pages/Signup';
 import {useApp } from './context/AppContext';
 import Group from './pages/Group';
 import Menu from './components/Menu';
-import GroupCreateForm from './components/GroupCreateForm';
 import GroupAddUserForm from './components/GroupAddUserForm';
 import RewardCreateForm from './components/RewardCreateForm';
 import TaskCreateForm from './components/TaskCreateForm';
@@ -60,10 +58,6 @@ const App: React.FC = () => {
             
             <Route exact path="/group" render={() => {
               return isAuthenticated ? <Group /> : <Login />;
-            }} />
-
-            <Route exact path="/groupform" render={() => {
-              return isAuthenticated ? <GroupCreateForm /> : <Login />;
             }} />
 
             <Route exact path="/groupUpdateForm" render={() => {
