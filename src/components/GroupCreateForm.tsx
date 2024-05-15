@@ -8,10 +8,10 @@ import { appIcons, getIcon } from '../constants/constants';
 import { useHistory } from 'react-router';
 
 interface Props {
-    setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+    reload: () => Promise<void>;
 }
 
-const GroupCreateForm: React.FC<Props> = ({setRefresh}) => {
+const GroupCreateForm: React.FC<Props> = ({reload}) => {
     const navigate = useHistory();
 
     const {apiConf} = useApp();
@@ -52,9 +52,8 @@ const GroupCreateForm: React.FC<Props> = ({setRefresh}) => {
             setToastOpen(true);
             setToastMessage(response.data.message!);
             setToastColor('success');
-            
-            navigate.push("/group");
-            setRefresh(true);
+            // Reload the group page
+            reload();
         } catch (error: any) {
             switch (error.response?.status) {
                 case 400:

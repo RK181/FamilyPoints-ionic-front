@@ -17,7 +17,6 @@ const Group: React.FC = () => {
     
     useIonViewWillEnter(() => {
         load();
-        console.log('ionViewDidEnter event fired');
     });
     
     const load = async () => {
@@ -74,7 +73,7 @@ const Group: React.FC = () => {
                 groupExist === true || refresh?
                     <GroupInfo group={group as any} />
                     :
-                    <GroupCreateForm setRefresh={setRefresh} />
+                    <GroupCreateForm reload={load} />
                 }
             </IonContent>
         </IonPage>
