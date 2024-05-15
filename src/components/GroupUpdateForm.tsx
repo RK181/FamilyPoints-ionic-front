@@ -33,7 +33,6 @@ const GroupUpdateForm: React.FC = () => {
 
     useIonViewWillEnter(() => {
         load();
-        console.log('ionViewDidEnter event fired');
     });
     
     const load = async () => {
@@ -99,6 +98,12 @@ const GroupUpdateForm: React.FC = () => {
                     setToastColor('danger');
                     navigate.push("/login");
                     break;
+                case 404:
+                    setToastOpen(true);
+                    setToastMessage('No se ha encontrado el grupo, por favor crea un grupo primero.');
+                    setToastColor('danger');
+                    navigate.push('/group');
+                    break;
                 case 500:
                     setToastOpen(true);
                     setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
@@ -133,6 +138,12 @@ const GroupUpdateForm: React.FC = () => {
                     setToastMessage('La sesión ha expirado, por favor inicia sesión de nuevo.');
                     setToastColor('danger');
                     navigate.push("/login");
+                    break;
+                case 404:
+                    setToastOpen(true);
+                    setToastMessage('No se ha encontrado el grupo, por favor crea un grupo primero.');
+                    setToastColor('danger');
+                    navigate.push('/group');
                     break;
                 case 500:
                     setToastOpen(true);
