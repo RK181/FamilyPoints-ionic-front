@@ -1,4 +1,4 @@
-import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonText, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { ApiResponse, AuthApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
@@ -17,6 +17,10 @@ const LoginForm: React.FC = () => {
     // Validation variabels
     const [isTouched, setIsTouched] = useState(false);
     const [isValid, setIsValid] = useState<boolean>();
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
 
     const submit = async (event: any) => {
         event.preventDefault();
@@ -42,8 +46,15 @@ const LoginForm: React.FC = () => {
                     var err401 = error.response.data as ApiResponse;
                     setFormErrors401(err401.message!);
                     break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Internal server error, please try again later.');
+                    setToastColor('danger');
+                    break;
                 default:
-                    // Handle other cases if needed
+                    setToastOpen(true);
+                    setToastMessage('An error occurred, please try again later.');
+                    setToastColor('danger');
                     break;
             }
         } finally {
@@ -119,6 +130,13 @@ const LoginForm: React.FC = () => {
                     Create account
                 </IonButton>
             </form>
+            <IonToast
+                isOpen={toastOpen}
+                message={toastMessage}
+                color={toastColor}
+                onDidDismiss={() => setToastOpen(false)}
+                duration={5000}
+            ></IonToast>
         </IonCardContent>
     );
 };
