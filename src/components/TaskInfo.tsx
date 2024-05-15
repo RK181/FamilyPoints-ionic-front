@@ -67,7 +67,7 @@ const TaskInfo: React.FC<Props> = ({group, task, approve, complete, validate, in
                         },
                     ]}
                 />
-                {!task.approve ? (task.creator?.email != authEmail || !group.conf_t_approve ? <IonButton color={'secondary'} onClick={() => approve(task.id!)} >Approve</IonButton> 
+                {!task.approve ? (task.creator?.email != authEmail || !group.conf_t_approve ? <IonButton color={'medium'} onClick={() => approve(task.id!)} >Approve</IonButton> 
                                     : <p>Waiting approval</p>)  
                 :
                 !task.complete ? <IonButton color={'success'} onClick={() => complete(task.id!)}>Complete</IonButton>
