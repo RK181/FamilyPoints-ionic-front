@@ -1,9 +1,10 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar, IonicSafeString, setupIonicReact } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Reward, RewardApi } from '../api';
 import { useApp } from '../context/AppContext';
 import { format, parseISO, subDays } from 'date-fns';
+import { informationCircleOutline } from 'ionicons/icons';
 
 const RewardCreateForm: React.FC = () => {
     const minDate = format(new Date(), 'yyyy-MM-dd');
@@ -21,6 +22,13 @@ const RewardCreateForm: React.FC = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const [toastColor, setToastColor] = useState<string>('success');
+    // Alert
+    const [showInformation, setShowInformation] = useState(false);
+
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     const submit = async (event: any) => {
         event.preventDefault();
@@ -85,6 +93,22 @@ const RewardCreateForm: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Add Reward</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        mode='md'
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Create Reward"
+                        message={new IonicSafeString(`
+                        <p><b>Title</b>: The title of the reward.</p>
+                        <p><b>Description</b>: The description of the reward, what the user will get.</p>
+                        <p><b>Cost</b>: Points that will be used to redeem the reward.</p>
+                        <p><b>Expire</b>: The day to get the reward.</p>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">

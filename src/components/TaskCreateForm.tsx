@@ -1,9 +1,10 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonLoading, IonModal, IonPage, IonRow, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar, IonicSafeString, setupIonicReact } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { ValidationErrorResponse, TaskApi } from '../api';
 import { useApp } from '../context/AppContext';
 import { format, parseISO } from 'date-fns';
+import { informationCircleOutline } from 'ionicons/icons';
 
 const TaskCreateForm: React.FC = () => {
     const minDate = format(new Date(), 'yyyy-MM-dd');
@@ -21,6 +22,13 @@ const TaskCreateForm: React.FC = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const [toastColor, setToastColor] = useState<string>('success');
+    // Alert
+    const [showInformation, setShowInformation] = useState(false);
+
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     const submit = async (event: any) => {
         event.preventDefault();
@@ -85,6 +93,22 @@ const TaskCreateForm: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Add Task</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        mode='md'
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Create Task"
+                        message={new IonicSafeString(`
+                        <p><b>Title</b>: The title of the task.</p>
+                        <p><b>Description</b>: The description of the task, what the user needs to do.</p>
+                        <p><b>Reward</b>: Points that will be given to the user who completes the task.</p>
+                        <p><b>Expire</b>: The day to complete the task.</p>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
@@ -95,33 +119,43 @@ const TaskCreateForm: React.FC = () => {
                         <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
                         <form onSubmit={submit} >
                             <IonInput
+                                className={`
+                                ${formErrors?.errors?.title ? 'ion-invalid ion-touched' : ''}
+                                `}
                                 mode="md"
                                 type="text"
                                 fill="outline"
                                 label="Title"
                                 labelPlacement="floating"
                                 onIonInput={(e) => setTitle(e.detail.value!)}
+                                errorText={`${formErrors?.errors?.title ?? ''} `}
                                 required
                             ></IonInput>
                             <IonInput 
-                                className="ion-margin-top"
+                                className={`
+                                ${formErrors?.errors?.description ? 'ion-margin-top ion-invalid ion-touched' : 'ion-margin-top'}
+                                `}
                                 mode="md"
                                 type="text"
                                 fill="outline"
                                 label="Description"
                                 labelPlacement="floating"
                                 onIonInput={(e) => setDescription(e.detail.value!)}
+                                errorText={`${formErrors?.errors?.description ?? ''} `}
                                 required
                             ></IonInput>
                             <IonInput
-                                className="ion-margin-top"
+                                className={`
+                                ${formErrors?.errors?.reward ? 'ion-margin-top ion-invalid ion-touched' : 'ion-margin-top'}
+                                `}
                                 mode="md"
                                 type="number"
                                 fill="outline"
                                 label="Reward"
                                 labelPlacement="floating"
                                 onIonInput={(e) => setReward(e.detail.value as any)}
-                                placeholder="123"
+                                errorText={`${formErrors?.errors?.reward ?? ''} `}
+                                placeholder="10"
                                 required
                             ></IonInput>
                             <IonDatetimeButton datetime="datetime" className="ion-margin-top"></IonDatetimeButton>
@@ -129,10 +163,6 @@ const TaskCreateForm: React.FC = () => {
                             <IonModal keepContentsMounted={true}>
                             <IonDatetime id="datetime" presentation="date" value={minDate as string }  min={minDate as string} onIonChange={(e) => setExpire(e.detail.value as string)} ></IonDatetime>
                             </IonModal>
-
-                            
-                            <IonText color={'danger'}>{formErrors?.errors?.toString() ?? ''} </IonText>
-
 
                             <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
                                 Create Task
