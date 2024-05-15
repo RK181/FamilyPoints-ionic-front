@@ -70,9 +70,7 @@ const Menu: React.FC = () => {
     try {
         var api = new AuthApi(apiConf);
         api.logoutUser();
-        //console.log("response:" + response.status);
         setSession!(false, '', '');
-        //setLoading(false);
 
         navigate.push("/login");
     } catch (error: any) {
