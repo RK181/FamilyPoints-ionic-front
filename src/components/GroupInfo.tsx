@@ -61,12 +61,12 @@ const GroupInfo: React.FC<Props> = ({group}) => {
             <IonRow>
                 
                 <IonCol>
-                    <IonButton type='button' expand="full" routerLink="/taskForm" >
+                    <IonButton type='button' expand="full" routerLink="/taskForm" color={'secondary'}>
                         New Task
                     </IonButton>
                 </IonCol>
                 <IonCol>
-                    <IonButton type='button' expand="full" routerLink="/rewardForm">
+                    <IonButton type='button' expand="full" routerLink="/rewardForm" color={'secondary'}>
                         New Reward
                     </IonButton>
                 </IonCol>

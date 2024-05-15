@@ -233,7 +233,7 @@ const GroupUpdateForm: React.FC = () => {
                             </IonItem>
                         </IonItemGroup>
 
-                        <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
+                        <IonButton type='submit' expand="block" color='warning' className="ion-margin-top" >
                             Update Group
                         </IonButton>
                         <IonButton
