@@ -1,4 +1,4 @@
-import { IonAlert, IonButton, IonButtons, IonContent, IonFooter, IonHeader, IonIcon, IonLoading, IonMenuButton, IonPage, IonTitle, IonToolbar, IonicSafeString, setupIonicReact, useIonViewWillEnter } from '@ionic/react';
+import { IonAlert, IonButton, IonButtons, IonContent, IonFooter, IonHeader, IonIcon, IonLoading, IonMenuButton, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToolbar, IonicSafeString, RefresherEventDetail, setupIonicReact, useIonViewWillEnter } from '@ionic/react';
 import React, { useState } from 'react';
 import GroupCreateForm from '../components/GroupCreateForm';
 import GroupInfo from '../components/GroupInfo';
@@ -49,6 +49,13 @@ const Group: React.FC = () => {
         }
     }
 
+    function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+        setTimeout(() => {
+          load();
+          event.detail.complete();
+        }, 0);
+    }
+
     return (
         <IonPage>
             <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
@@ -93,6 +100,9 @@ const Group: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
+                <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                    <IonRefresherContent></IonRefresherContent>
+                </IonRefresher>
                 {groupExist == null ? ''
                 :
                 groupExist === true ?
