@@ -1,10 +1,11 @@
-import { IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToast, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToast, IonToggle, IonToolbar, IonicSafeString, setupIonicReact, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { AuthApi, Group, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
 import './GroupCreateForm.css';
 import { appIcons, getIcon } from '../constants/constants';
 import { useHistory } from 'react-router';
+import { informationCircleOutline } from 'ionicons/icons';
 
 const GroupUpdateForm: React.FC = () => {
     const navigate = useHistory();
@@ -29,7 +30,13 @@ const GroupUpdateForm: React.FC = () => {
 
 
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+    const [showInformation, setShowInformation] = useState<boolean>(false);
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
+
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     useIonViewWillEnter(() => {
         load();
@@ -50,14 +57,29 @@ const GroupUpdateForm: React.FC = () => {
             setPerTInValidation(response.data.conf_t_invalidate!);
             setReqRValidation(response.data.conf_r_valiadte!);
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
+            switch (error.response?.status) {
+                case 401:
+                    setToastOpen(true);
+                    setToastMessage('The session has expired, please login again.');
+                    setToastColor('danger');
+                    navigate.push("/login");
+                    break;
+                case 404:
+                    setToastOpen(true);
+                    setToastMessage('No group found, please create a group first.');
+                    setToastColor('danger');
+                    navigate.push('/group');
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Internal server error, please try again later.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('An error occurred, please try again later.');
+                    setToastColor('danger');
+                    break;
             }
 
         }finally {
@@ -171,6 +193,31 @@ const GroupUpdateForm: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Group Update</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Update Group"
+                        message={new IonicSafeString(`
+                        <p><small>*If you don't want to change any field, leave it as is.</small></p>
+                        <p><b>Group Name</b>: The name of the group.</p>
+                        <p><b>Points</b>: Can be earned and used to redeem rewards.</p>
+                        <ul>
+                            <li><small><b>Points Name</b>: The name of the points.</small></li>
+                            <li><small><b>Points Icon</b>: The icon of the points.</small></li>
+                        </ul>
+                        <p><b>Settings</b></p>
+                        <ul>
+                            <li><small><b>Require Task Approval</b>: If the tasks require approval of the couple.</small></li>
+                            <li><small><b>Require Task Validation</b>: If the tasks require validation of the couple to receive points after completing the task.</small></li>
+                            <li><small><b>Permite Task Invalidation</b>: If the tasks can be invalidated by the couple.</small></li>
+                            <li><small><b>Require Reward Validation</b>: If the rewards require validation of the couple to be redeemed.</small></li>
+                        </ul>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
