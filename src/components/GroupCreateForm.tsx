@@ -14,7 +14,7 @@ interface Props {
 const GroupCreateForm: React.FC<Props> = ({reload}) => {
     const navigate = useHistory();
 
-    const {apiConf} = useApp();
+    const {apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -64,6 +64,7 @@ const GroupCreateForm: React.FC<Props> = ({reload}) => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push("/login");
                     break;
                 case 500:

@@ -6,7 +6,7 @@ import { ValidationErrorResponse, GroupApi, Group, User} from '../api';
 
 const GroupAddUserForm: React.FC = () => {
     const navigate = useHistory();
-    const {isAuthenticated, apiConf} = useApp();
+    const {setSession, apiConf} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -43,6 +43,7 @@ const GroupAddUserForm: React.FC = () => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push('/login');
                     break;
                 case 500:

@@ -10,7 +10,7 @@ import { informationCircleOutline } from 'ionicons/icons';
 const GroupUpdateForm: React.FC = () => {
     const navigate = useHistory();
 
-    const {isAuthenticated, apiConf} = useApp();
+    const {setSession, apiConf} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -62,6 +62,7 @@ const GroupUpdateForm: React.FC = () => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push("/login");
                     break;
                 case 404:
@@ -118,6 +119,7 @@ const GroupUpdateForm: React.FC = () => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push("/login");
                     break;
                 case 404:
@@ -159,6 +161,7 @@ const GroupUpdateForm: React.FC = () => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push("/login");
                     break;
                 case 404:

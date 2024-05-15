@@ -1,7 +1,7 @@
 import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
-import { ValidationErrorResponse, Reward, RewardApi, Group, GroupApi, User } from '../api';
+import { Reward, RewardApi, Group, GroupApi, User } from '../api';
 import { useApp } from '../context/AppContext';
 import RewardInfo from './RewardInfo';
 import { filterSharp } from 'ionicons/icons';
@@ -10,7 +10,7 @@ import './List.css';
 
 const RewardList: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf, authEmail} = useApp();
+    const {apiConf, authEmail, setSession} = useApp();
     const [rewardList, setRewardList] = useState<Reward[]>();
     const [rewardSearchList, setSearchRewardList] = useState<Reward[]>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -34,6 +34,7 @@ const RewardList: React.FC = () => {
                 setToastOpen(true);
                 setToastMessage('The session has expired, please login again.');
                 setToastColor('danger');
+                setSession!(false, '', '');
                 navigate.push("/login");
                 break;
             case 500:

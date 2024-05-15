@@ -11,7 +11,7 @@ import { informationCircleOutline } from 'ionicons/icons';
 
 const Group: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf} = useApp();
+    const {apiConf, setSession} = useApp();
     const [group, setGroup] = useState<GroupInterface>();
     const [loading, setLoading] = useState<boolean>(true);
     const [groupExist, setGroupExist] = useState<boolean | null>(null);
@@ -41,6 +41,7 @@ const Group: React.FC = () => {
                 setGroupExist(false);
             }
             else if (error.response?.status == 401) {
+                setSession!(false, '', '');
                 navigate.push("/login");
             }
         }finally {
