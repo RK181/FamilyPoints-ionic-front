@@ -13,6 +13,7 @@ const Group: React.FC = () => {
     const [group, setGroup] = useState<GroupInterface>();
     const [loading, setLoading] = useState<boolean>(true);
     const [groupExist, setGroupExist] = useState<boolean | null>(null);
+    const [refresh, setRefresh] = useState<boolean>(false);
     
     useIonViewWillEnter(() => {
         load();
@@ -36,7 +37,6 @@ const Group: React.FC = () => {
             console.log("Key:" +apiConf!.accessToken);
 
             if (error.response?.status == 404) {
-                //navigate.push("/login");
                 setGroupExist(false);
                 console.log('No group found');
 
@@ -60,7 +60,7 @@ const Group: React.FC = () => {
                     <IonTitle>
                         {groupExist == null ? ''
                         :
-                        groupExist == true ?
+                        groupExist === true || refresh?
                             "Group Info"
                             :
                             "Create Group"
@@ -71,10 +71,10 @@ const Group: React.FC = () => {
             <IonContent className="ion-padding">
                 {groupExist == null ? ''
                 :
-                groupExist == true ?
+                groupExist === true || refresh?
                     <GroupInfo group={group as any} />
                     :
-                    <GroupCreateForm />
+                    <GroupCreateForm setRefresh={setRefresh} />
                 }
             </IonContent>
         </IonPage>
