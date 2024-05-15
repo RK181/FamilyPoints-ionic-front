@@ -602,6 +602,30 @@ export interface ValidationErrorResponseErrors {
      * @memberof ValidationErrorResponseErrors
      */
     'points_icon'?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'title'?: Array<string>;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'description'?: Array<string>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'cost'?: Array<number>;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof ValidationErrorResponseErrors
+     */
+    'reward'?: Array<number>;
 }
 
 /**
