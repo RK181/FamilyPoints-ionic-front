@@ -68,6 +68,7 @@ const Group: React.FC = () => {
                         <IonIcon icon={informationCircleOutline}></IonIcon>
                     </IonButton>
                     <IonAlert
+                        mode='md'
                         isOpen={showInformation}
                         onDidDismiss={() => setShowInformation(false)}
                         header="Info. Create Group"
@@ -78,6 +79,7 @@ const Group: React.FC = () => {
                             <li><small><b>Points Name</b>: The name of the points.</small></li>
                             <li><small><b>Points Icon</b>: The icon of the points.</small></li>
                         </ul>
+                        <p><small>*Points can have a negative value.</small></p>
                         <p><b>Settings</b></p>
                         <ul>
                             <li><small><b>Require Task Approval</b>: If the tasks require approval of the couple.</small></li>
