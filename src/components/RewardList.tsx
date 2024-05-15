@@ -1,4 +1,4 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, RefresherEventDetail, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Reward, RewardApi, Group, GroupApi, User } from '../api';
@@ -55,6 +55,13 @@ const RewardList: React.FC = () => {
     useIonViewWillEnter(() => {
         load();
     });
+
+    function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+        setTimeout(() => {
+          load();
+          event.detail.complete();
+        }, 0);
+    }
     
     const load = async () => {
         setLoading(true);
@@ -204,6 +211,9 @@ const RewardList: React.FC = () => {
                     <IonTitle>Reward List</IonTitle>
                 </IonToolbar>
                 <IonToolbar>
+                    <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                        <IonRefresherContent></IonRefresherContent>
+                    </IonRefresher>
                     <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)} ></IonSearchbar>
                     <IonButton id="open-custom-dialog" slot='end' fill='clear' style={{'--padding-start': '0.2em'}}><IonIcon icon={filterSharp}></IonIcon></IonButton>
                     <IonModal id='select-modal' ref={modal} trigger="open-custom-dialog">
