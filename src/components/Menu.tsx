@@ -60,13 +60,9 @@ const Menu: React.FC = () => {
   const location = useLocation();
   const navigate = useHistory();
   const {isAuthenticated, apiConf, setSession} = useApp();
-  const [loading, setLoading] = useState(false);
 
 
   const logOutSession = async (event: any) => {
-    //event.preventDefault();
-    //setLoading(true);
-
     try {
         var api = new AuthApi(apiConf);
         api.logoutUser();
