@@ -1,4 +1,4 @@
-import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToggle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToast, IonToggle, IonToolbar } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { AuthApi, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
@@ -7,8 +7,11 @@ import './GroupCreateForm.css';
 import { appIcons, getIcon } from '../constants/constants';
 import { useHistory } from 'react-router';
 
+interface Props {
+    setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const GroupCreateForm: React.FC = () => {
+const GroupCreateForm: React.FC<Props> = ({setRefresh}) => {
     const navigate = useHistory();
 
     const {apiConf} = useApp();
@@ -23,6 +26,10 @@ const GroupCreateForm: React.FC = () => {
     const [permiteTaskInValidation, setPerTInValidation] = useState<boolean>(true);
     const [requireRewardValidation, setReqRValidation] = useState<boolean>(true);
     const modal = useRef<HTMLIonModalElement>(null);
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
 
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
 
@@ -42,14 +49,34 @@ const GroupCreateForm: React.FC = () => {
                 conf_t_invalidate: permiteTaskInValidation,
                 conf_r_valiadte: requireRewardValidation
             });
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             
-            console.log("status:" + response.data.status + "| msg: " + response.data.message)
             navigate.push("/group");
-
+            setRefresh(true);
         } catch (error: any) {
-            if (error.response?.status == 400) {
-                var err = error.response.data as ValidationErrorResponse;
-                setFormErrors(err);
+            switch (error.response?.status) {
+                case 400:
+                    var err = error.response.data as ValidationErrorResponse;
+                    setFormErrors(err);
+                    break;
+                case 401:
+                    setToastOpen(true);
+                    setToastMessage('La sesión ha expirado, por favor inicia sesión de nuevo.');
+                    setToastColor('danger');
+                    navigate.push("/login");
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
             }
             
         } finally {
@@ -73,7 +100,6 @@ const GroupCreateForm: React.FC = () => {
                     label="Group Name"
                     labelPlacement="floating"
                     onIonInput={(e) => setName(e.detail.value!)}
-                    //placeholder=""
                     errorText={`${formErrors?.errors?.name ?? ''} `} 
                     required
                 ></IonInput>
@@ -90,7 +116,6 @@ const GroupCreateForm: React.FC = () => {
                             mode="md"
                             type="text"
                             label="Points Name:"
-                            //labelPlacement="floating"
                             onIonInput={(e) => setPointsName(e.detail.value!)}
                             placeholder="..."
                             errorText={`${formErrors?.errors?.points_name ?? ''} `} 
@@ -132,15 +157,21 @@ const GroupCreateForm: React.FC = () => {
                         <IonToggle checked={requireRewardValidation} enableOnOffLabels={true} onIonChange={(e) => setReqRValidation(e.detail.checked!)}>Require Reward Validation</IonToggle>
                     </IonItem>
                 </IonItemGroup>
-                <div>{formErrors?.errors?.points_name?.toString() ?? null} </div>
-
 
                 <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
                     Create Group
                 </IonButton>
             </form>
             </IonCol>
+            <IonToast
+                isOpen={toastOpen}
+                message={toastMessage}
+                color={toastColor}
+                onDidDismiss={() => setToastOpen(false)}
+                duration={5000}
+            ></IonToast>
         </IonRow>
+        
     );
 };
 
