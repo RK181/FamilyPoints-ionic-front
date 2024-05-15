@@ -1,10 +1,10 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, RefresherEventDetail, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonAlert, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, IonicSafeString, RefresherEventDetail, SearchbarInputEventDetail, setupIonicReact, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Reward, RewardApi, Group, GroupApi, User } from '../api';
 import { useApp } from '../context/AppContext';
 import RewardInfo from './RewardInfo';
-import { filterSharp } from 'ionicons/icons';
+import { filterSharp, informationCircleOutline } from 'ionicons/icons';
 import { getIcon } from '../constants/constants';
 import './List.css';
 
@@ -21,6 +21,13 @@ const RewardList: React.FC = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const [toastColor, setToastColor] = useState<string>('success');
+    // Alert
+    const [showInformation, setShowInformation] = useState(false);
+
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     function errorhandler(error: any) {
         switch (error.response?.status) {
@@ -50,7 +57,7 @@ const RewardList: React.FC = () => {
                 navigate.push('/group');
                 break;
         }
-    }
+    };
 
     useIonViewWillEnter(() => {
         load();
@@ -61,7 +68,7 @@ const RewardList: React.FC = () => {
           load();
           event.detail.complete();
         }, 0);
-    }
+    };
     
     const load = async () => {
         setLoading(true);
@@ -84,7 +91,7 @@ const RewardList: React.FC = () => {
         }finally {
             setLoading(false);
         }
-    }
+    };
 
     const redeem = async (id: number) => {
         setLoading(true);
@@ -102,7 +109,7 @@ const RewardList: React.FC = () => {
         }finally {
             setLoading(false);
         }
-    }
+    };
 
     const validate = async (id: number) => {
         setLoading(true);
@@ -120,7 +127,7 @@ const RewardList: React.FC = () => {
         }finally {
             setLoading(false);
         }
-    }
+    };
 
     const remove = async (id: number) => {
         setLoading(true);
@@ -137,7 +144,7 @@ const RewardList: React.FC = () => {
         }finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleListChange = (id: number, action: string) => {
         switch (action) {
@@ -209,6 +216,26 @@ const RewardList: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Reward List</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        mode='md'
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Reward List"
+                        message={new IonicSafeString(`
+                        <p><b>Reward ownership</b></p>
+                        <ul>
+                            <li><small><b>Blue</b>: The reward you have created.</small></li>
+                            <li><small><b>White</b>: The reward created by the couple.</small></li>
+                        </ul>
+                        <p><b>Reedem</b>: Redeem the reward and wait to be validated to deduct the points.</p>
+                        <p><b>Validate</b>: Validate the completed reward and deduct the points.</p>
+                        <p><small>*You can change the need of a specific step in group settings.</small></p>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
                 <IonToolbar>
                     <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
