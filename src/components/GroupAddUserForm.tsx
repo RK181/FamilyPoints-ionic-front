@@ -24,8 +24,6 @@ const GroupAddUserForm: React.FC = () => {
         setFormErrors(null);
         event.preventDefault();
         setLoading(true);
-        console.log('ionViewDidEnter event fired');
-
 
         try {
             var api = new GroupApi(apiConf);
@@ -36,11 +34,28 @@ const GroupAddUserForm: React.FC = () => {
             setToastColor('success');
 
         } catch (error: any) {
-            if (error.response?.status == 400) {
-                var err = error.response.data as ValidationErrorResponse;
-                setFormErrors(err);
+            switch (error.response?.status) {
+                case 400:
+                    var err = error.response.data as ValidationErrorResponse;
+                    setFormErrors(err);
+                    break;
+                case 401:
+                    setToastOpen(true);
+                    setToastMessage('La sesión ha expirado, por favor inicia sesión nuevamente.');
+                    setToastColor('danger');
+                    navigate.push('/login');
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
             }
-            console.log(error);
             
         } finally {
             setLoading(false);
@@ -98,7 +113,6 @@ const GroupAddUserForm: React.FC = () => {
                             errorText={`${formErrors?.errors['email'] ?? 'Invalid email'}`} 
                             onIonInput={(e) => {validate(e); setEmailError(e.detail.value!)}}
                             onIonBlur={() => markTouched()}
-                            //onIonChange={(e) => setEmailError(e.detail.value!)}
                             placeholder="example@email.com"
                             required
                         ></IonInput>
