@@ -14,13 +14,6 @@ interface Props {
 }
 
 const GroupInfo: React.FC<Props> = ({group}) => {
-    const navigate = useHistory();
-    const {apiConf, isAuthenticated} = useApp();
-
-    useIonViewWillEnter(() => {
-        console.log("group");
-        console.log(group);
-    });
 
     return (
         <IonCardContent>
