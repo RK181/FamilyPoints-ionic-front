@@ -41,18 +41,18 @@ const GroupAddUserForm: React.FC = () => {
                     break;
                 case 401:
                     setToastOpen(true);
-                    setToastMessage('La sesión ha expirado, por favor inicia sesión nuevamente.');
+                    setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
                     navigate.push('/login');
                     break;
                 case 500:
                     setToastOpen(true);
-                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastMessage('Internal server error, please try again later.');
                     setToastColor('danger');
                     break;
                 default:
                     setToastOpen(true);
-                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastMessage('An error occurred, please try again later.');
                     setToastColor('danger');
                     break;
             }
