@@ -1,7 +1,8 @@
-import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonButton } from '@ionic/react';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonItem, IonButton, IonAlert } from '@ionic/react';
 import { Group, Reward} from '../api';
 import './TaskInfo.css'
 import { useApp } from '../context/AppContext';
+import { useState } from 'react';
 
 interface Props {
     group: Group
@@ -13,6 +14,7 @@ interface Props {
 
 const TaskInfo: React.FC<Props> = ({group, reward, redeem, validate, remove}) => {
     const {authEmail} = useApp();
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     return (
         <IonCard>
@@ -34,7 +36,32 @@ const TaskInfo: React.FC<Props> = ({group, reward, redeem, validate, remove}) =>
             </IonCardHeader>
             <IonCardContent>{reward.description}</IonCardContent>
             <IonItem>
-                <IonButton slot="end" color={'danger'} onClick={() => remove(reward.id!)}>Delete</IonButton>
+                <IonButton
+                    slot="end"
+                    color="danger"
+                    onClick={() => setShowConfirmation(true)}
+                >
+                    Delete
+                </IonButton>
+                <IonAlert
+                    isOpen={showConfirmation}
+                    onDidDismiss={() => setShowConfirmation(false)}
+                    header="Confirmation"
+                    message="Are you sure you want to delete this reward?"
+                    buttons={[
+                        {
+                            text: "Cancel",
+                            role: "cancel",
+                            cssClass: "secondary",
+                        },
+                        {
+                            text: "Delete",
+                            handler: () => {
+                                remove(reward.id!);
+                            },
+                        },
+                    ]}
+                />
                 {!reward.redeem && reward.user?.email == authEmail ? <IonButton color={'secondary'} onClick={() => redeem(reward.id!)}>Redeem</IonButton>
                 :
                 reward.redeem && !reward.validate ? (reward.user?.email != authEmail || !group.conf_r_valiadte ? <IonButton color={'tertiary'} onClick={() => validate(reward.id!)}>Validate</IonButton> 

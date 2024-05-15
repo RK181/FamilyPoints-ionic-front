@@ -1,5 +1,5 @@
-import { IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonItem, IonItemDivider, IonLabel, IonNote, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import React from 'react';
+import { IonAlert, IonButton, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonItem, IonItemDivider, IonLabel, IonNote, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import React, { useState } from 'react';
 import { Group, Task } from '../api';
 import './TaskInfo.css'
 import { useApp } from '../context/AppContext';
@@ -16,6 +16,7 @@ interface Props {
 
 const TaskInfo: React.FC<Props> = ({group, task, approve, complete, validate, invalidate, remove }) => {
     const {authEmail} = useApp();
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     return (
         <IonCard>
@@ -40,8 +41,32 @@ const TaskInfo: React.FC<Props> = ({group, task, approve, complete, validate, in
             </IonCardHeader>
             <IonCardContent>{task.description}</IonCardContent>
             <IonItem>
-                <IonButton slot="end" color={'danger'} onClick={() => remove(task.id!)}>Delete</IonButton>
-
+                <IonButton
+                    slot="end"
+                    color="danger"
+                    onClick={() => setShowConfirmation(true)}
+                >
+                    Delete
+                </IonButton>
+                <IonAlert
+                    isOpen={showConfirmation}
+                    onDidDismiss={() => setShowConfirmation(false)}
+                    header="Confirmation"
+                    message="Are you sure you want to delete this task?"
+                    buttons={[
+                        {
+                            text: "Cancel",
+                            role: "cancel",
+                            cssClass: "secondary",
+                        },
+                        {
+                            text: "Delete",
+                            handler: () => {
+                                remove(task.id!);
+                            },
+                        },
+                    ]}
+                />
                 {!task.approve ? (task.creator?.email != authEmail || !group.conf_t_approve ? <IonButton color={'secondary'} onClick={() => approve(task.id!)} >Approve</IonButton> 
                                     : <p>Waiting approval</p>)  
                 :
