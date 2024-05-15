@@ -8,7 +8,7 @@ import { format, parseISO } from 'date-fns';
 const TaskCreateForm: React.FC = () => {
     const minDate = format(new Date(), 'yyyy-MM-dd');
     const navigate = useHistory();
-    const {apiConf} = useApp();
+    const {apiConf, setSession} = useApp();
     // Loading Animation
     const [loading, setLoading] = useState<boolean>(false);
     // Form variabels
@@ -51,6 +51,7 @@ const TaskCreateForm: React.FC = () => {
                     setToastOpen(true);
                     setToastMessage('The session has expired, please login again.');
                     setToastColor('danger');
+                    setSession!(false, '', '');
                     navigate.push('/login');
                     break;
                 case 404:
