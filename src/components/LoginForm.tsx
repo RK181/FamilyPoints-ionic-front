@@ -32,7 +32,6 @@ const LoginForm: React.FC = () => {
             var api = new AuthApi(apiConf);
             var response = await api.loginUser({ email: email, password: password});
             setSession!(true, response.data.token as string, email)
-            console.log('auth: ' + isAuthenticated + ' Token: ' + apiConf!.accessToken)
             // Redirect to group page
             navigate.push("/group");
 
