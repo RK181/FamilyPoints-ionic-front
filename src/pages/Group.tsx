@@ -9,11 +9,10 @@ import { useApp } from '../context/AppContext';
 
 const Group: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf, isAuthenticated} = useApp();
+    const {apiConf} = useApp();
     const [group, setGroup] = useState<GroupInterface>();
     const [loading, setLoading] = useState<boolean>(true);
     const [groupExist, setGroupExist] = useState<boolean | null>(null);
-    const [refresh, setRefresh] = useState<boolean>(false);
     
     useIonViewWillEnter(() => {
         load();
@@ -23,31 +22,21 @@ const Group: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
             var api = new GroupApi(apiConf);
-            
             var response = await api.getGroup();
 
             setGroup(response.data)
             setGroupExist(true);
-            console.log(response);
-
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
             if (error.response?.status == 404) {
                 setGroupExist(false);
-                console.log('No group found');
-
             }
             else if (error.response?.status == 401) {
                 navigate.push("/login");
             }
-
         }finally {
             setLoading(false);
         }
-
     }
 
     return (
@@ -59,7 +48,7 @@ const Group: React.FC = () => {
                     <IonTitle>
                         {groupExist == null ? ''
                         :
-                        groupExist === true || refresh?
+                        groupExist === true ?
                             "Group Info"
                             :
                             "Create Group"
@@ -70,7 +59,7 @@ const Group: React.FC = () => {
             <IonContent className="ion-padding">
                 {groupExist == null ? ''
                 :
-                groupExist === true || refresh?
+                groupExist === true ?
                     <GroupInfo group={group as any} />
                     :
                     <GroupCreateForm reload={load} />
