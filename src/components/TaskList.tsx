@@ -1,4 +1,4 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Task, TaskApi } from '../api';
@@ -7,6 +7,7 @@ import TaskInfo from './TaskInfo';
 import { filterSharp } from 'ionicons/icons';
 import { getIcon } from '../constants/constants';
 import './List.css';
+import { set } from 'date-fns';
 
 const TaskList: React.FC = () => {
     const navigate = useHistory();
@@ -16,11 +17,42 @@ const TaskList: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [group, setGroup] = useState<Group>();
     const modal = useRef<HTMLIonModalElement>(null);
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
 
+    function errorhandler(error: any) {
+        switch (error.response?.status) {
+            case 404:
+                setToastOpen(true);
+                setToastMessage('No group found, please create a group first.');
+                setToastColor('danger');
+                navigate.push("/group");
+                break;
+            case 401:
+                setToastOpen(true);
+                setToastMessage('The session has expired, please login again.');
+                setToastColor('danger');
+                navigate.push("/login");
+                break;
+            case 500:
+                setToastOpen(true);
+                setToastMessage('Internal server error, please try again later.');
+                setToastColor('danger');
+                navigate.push("/group");
+                break;
+            default:
+                setToastOpen(true);
+                setToastMessage('An error occurred, please try again later.');
+                setToastColor('danger');
+                navigate.push('/group');
+                break;
+        }
+    }
     
     useIonViewWillEnter(() => {
         load();
-        console.log('Group reward list ionViewDidEnter event fired');
     });
     
     const load = async () => {
@@ -39,46 +71,25 @@ const TaskList: React.FC = () => {
             console.log(responseT);
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
-
     }
 
     const approve = async (id: number) => {
         setLoading(true);
         
         try {
-            console.log('Senging request');
-            
             var api = new TaskApi(apiConf);
             var response = await api.approveTaskById(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'approve');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -89,25 +100,15 @@ const TaskList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging request');
-            
             var api = new TaskApi(apiConf);
             var response = await api.completeTaskById(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'complete');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -118,25 +119,15 @@ const TaskList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
-            
             var api = new TaskApi(apiConf);
             var response = await api.validateTaskById(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'validate');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -147,25 +138,15 @@ const TaskList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
-            
             var api = new TaskApi(apiConf);
             var response = await api.inValidateTaskById(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'invalidate');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -176,25 +157,15 @@ const TaskList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
-            
             var api = new TaskApi(apiConf);
             var response = await api.deleteTaskById(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'remove');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
-
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -346,6 +317,13 @@ const TaskList: React.FC = () => {
                         </IonAccordionGroup>
                     );
                 })}
+            <IonToast
+                isOpen={toastOpen}
+                message={toastMessage}
+                color={toastColor}
+                onDidDismiss={() => setToastOpen(false)}
+                duration={5000}
+            ></IonToast>
             </IonContent>
         </IonPage>
     );

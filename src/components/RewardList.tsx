@@ -1,4 +1,4 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCardContent, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonProgressBar, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonTitle, IonToast, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { ValidationErrorResponse, Reward, RewardApi, Group, GroupApi, User } from '../api';
@@ -17,17 +17,48 @@ const RewardList: React.FC = () => {
     const [group, setGroup] = useState<Group>();
     const [currentUser, setCurrentUser] = useState<User>();
     const modal = useRef<HTMLIonModalElement>(null);
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
+
+    function errorhandler(error: any) {
+        switch (error.response?.status) {
+            case 404:
+                setToastOpen(true);
+                setToastMessage('No group found, please create a group first.');
+                setToastColor('danger');
+                navigate.push("/group");
+                break;
+            case 401:
+                setToastOpen(true);
+                setToastMessage('The session has expired, please login again.');
+                setToastColor('danger');
+                navigate.push("/login");
+                break;
+            case 500:
+                setToastOpen(true);
+                setToastMessage('Internal server error, please try again later.');
+                setToastColor('danger');
+                navigate.push("/group");
+                break;
+            default:
+                setToastOpen(true);
+                setToastMessage('An error occurred, please try again later.');
+                setToastColor('danger');
+                navigate.push('/group');
+                break;
+        }
+    }
 
     useIonViewWillEnter(() => {
         load();
-        console.log('Group reward list ionViewDidEnter event fired');
     });
     
     const load = async () => {
         setLoading(true);
         
         try {
-            console.log('Senging request');
             var api = new GroupApi(apiConf);
             var response = await api.getGroup();
             setGroup(response.data);
@@ -35,22 +66,13 @@ const RewardList: React.FC = () => {
             var user = response.data.creator?.email == authEmail ? response.data.creator : response.data.couple;
             setCurrentUser(user)
             
-            console.log('Senging request');
             var apiR = new RewardApi(apiConf);           
             var responseR = await apiR.getGroupRewardList();
             setRewardList(responseR.data);
             setSearchRewardList(responseR.data);
-            console.log(responseR);
+            
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -60,25 +82,15 @@ const RewardList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
             var api = new RewardApi(apiConf);
             var response = await api.redeemReward(id);
-            console.log(response.data);
-            
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'redeem');
             
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            switch (error.response?.status) {
-                case 404:
-                    navigate.push("/group");
-                    console.log('No group found');
-                    break;
-                case 401:
-                    navigate.push("/login");
-                    break;
-            }
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -88,23 +100,15 @@ const RewardList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
-            
             var api = new RewardApi(apiConf);
             var response = await api.validateReward(id);
-            console.log(response.data);
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'validate');
 
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -114,23 +118,14 @@ const RewardList: React.FC = () => {
         setLoading(true);
         
         try {
-            console.log('Senging recuest');
-            
             var api = new RewardApi(apiConf);
             var response = await api.deleteRewardById(id);
-            console.log(response.data);
-
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             handleListChange(id, 'remove');
         } catch (error: any) {
-            console.log("Key:" +apiConf!.accessToken);
-
-            if (error.response?.status == 404) {
-                navigate.push("/group");
-                console.log('No group found');
-            }
-            else if (error.response?.status == 401) {
-                navigate.push("/login");
-            }
+            errorhandler(error);
         }finally {
             setLoading(false);
         }
@@ -267,6 +262,13 @@ const RewardList: React.FC = () => {
                         </IonAccordionGroup>
                     );
                 })}
+            <IonToast
+                isOpen={toastOpen}
+                message={toastMessage}
+                color={toastColor}
+                onDidDismiss={() => setToastOpen(false)}
+                duration={5000}
+            ></IonToast>
             </IonContent>
         </IonPage>
     );
