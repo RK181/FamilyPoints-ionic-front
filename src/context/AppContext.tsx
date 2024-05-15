@@ -29,14 +29,10 @@ export function AppProvider ({children}: any) {
                 if (token != null && token != "") {
                     setApiConf(new Configuration({basePath: API_URL, accessToken: token}))
                     setAuthState(true);
-                    console.log('Got from storage: ' + token);
-
                     const email = await db.get(AUTH_EMAIL_KEY)!
                     if (email != null) {
                         setAuthEmail(email);
                     }
-                    console.log('Got from storage: ' + email)
-
                 }
             } else { 
                 setDb(await ConnectDB(DB_NAME));
