@@ -1,17 +1,16 @@
-import { IonAccordion, IonAccordionGroup, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar, SearchbarInputEventDetail, useIonViewWillEnter } from '@ionic/react';
+import { IonAccordion, IonAccordionGroup, IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonItemGroup, IonItemOption, IonItemOptions, IonItemSliding, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonPopover, IonRefresher, IonRefresherContent, IonRow, IonSearchbar, IonSelect, IonSelectOption, IonText, IonTitle, IonToast, IonToggle, IonToolbar, IonicSafeString, RefresherEventDetail, SearchbarInputEventDetail, setupIonicReact, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { GroupApi, Group, User, ValidationErrorResponse, Task, TaskApi } from '../api';
 import { useApp } from '../context/AppContext';
 import TaskInfo from './TaskInfo';
-import { filterSharp } from 'ionicons/icons';
+import { filterSharp, informationCircleOutline } from 'ionicons/icons';
 import { getIcon } from '../constants/constants';
 import './List.css';
-import { set } from 'date-fns';
 
 const TaskList: React.FC = () => {
     const navigate = useHistory();
-    const {apiConf, authEmail} = useApp();
+    const {apiConf, authEmail, setSession} = useApp();
     const [taskList, setTaskList] = useState<Task[]>();
     const [taskSearchList, setSearchTaskList] = useState<Task[]>();
     const [loading, setLoading] = useState<boolean>(true);
@@ -21,6 +20,13 @@ const TaskList: React.FC = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const [toastColor, setToastColor] = useState<string>('success');
+
+    const [showInformation, setShowInformation] = useState(false);
+
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     function errorhandler(error: any) {
         switch (error.response?.status) {
@@ -34,6 +40,7 @@ const TaskList: React.FC = () => {
                 setToastOpen(true);
                 setToastMessage('The session has expired, please login again.');
                 setToastColor('danger');
+                setSession!(false, '', '');
                 navigate.push("/login");
                 break;
             case 500:
@@ -77,6 +84,13 @@ const TaskList: React.FC = () => {
         }
     }
 
+    function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+        setTimeout(() => {
+          load();
+          event.detail.complete();
+        }, 0);
+    }
+    
     const approve = async (id: number) => {
         setLoading(true);
         
@@ -264,6 +278,29 @@ const TaskList: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Task List</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        mode='md'
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Task List"
+                        message={new IonicSafeString(`
+                        <p><b>Completed task</b></p>
+                        <ul>
+                            <li><small><b>Blue</b>: The task you have completed.</small></li>
+                            <li><small><b>White</b>: The task your couple has completed.</small></li>
+                            <li><small><b>Grey</b>: The task is not completed.</small></li>
+                        </ul>
+                        <p><b>Approve</b>: Approve the creation of the task to be able to complete.</p>
+                        <p><b>Complite</b>: Complete the task and wait to be validated to receive earned points.</p>
+                        <p><b>Validate</b>: Validate the completed task.</p>
+                        <p><b>Invalidate</b>: Invalidate the completed task and remove to earned points.</p>
+                        <p><small>*You can change the need of a specific step in group settings.</small></p>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar debounce={1000} onIonInput={(ev) => handleInput(ev)} ></IonSearchbar>
@@ -298,12 +335,15 @@ const TaskList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
+                <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                    <IonRefresherContent></IonRefresherContent>
+                </IonRefresher>
                 <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
                 {taskSearchList?.map((task) => {
                     return (
                         <IonAccordionGroup expand="inset" key={task.id}>
                             <IonAccordion>
-                                <IonItem slot="header" color={task.user?.email == authEmail ? "secondary" : "light"}>
+                                <IonItem slot="header" color={task.user?.email === authEmail ? "secondary" : group?.couple?.email === task.user?.email ? "light" : "medium"}>
                                     <IonLabel>
                                     <h3>{task.title}</h3>
                                     <small>Reward: {task.reward} <IonIcon src={getIcon(group?.points_icon!)}></IonIcon></small> <br/>
