@@ -1,4 +1,4 @@
-import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonRedirect, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonCardContent, IonContent, IonHeader, IonInput, IonItem, IonLoading, IonPage, IonRedirect, IonText, IonTitle, IonToast, IonToolbar } from '@ionic/react';
 import React, { useState } from 'react';
 import { AuthApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
@@ -17,6 +17,11 @@ const LoginForm: React.FC = () => {
     // Validation variabels
     const [isTouched, setIsTouched] = useState(false);
     const [isValid, setIsValid] = useState<boolean>();
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
+
 
     const submit = async (event: any) => {
         event.preventDefault();
@@ -24,14 +29,28 @@ const LoginForm: React.FC = () => {
 
         try {
             var api = new AuthApi(apiConf);
-            await api.signupUser({ name: name, email: email, password: password});
+            var response = await api.signupUser({ name: name, email: email, password: password});
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             navigate.push("/login");
         } catch (error: any) {
-            if (error.response?.status == 400) {
-                var err = error.response.data as ValidationErrorResponse;
-                setFormErrors(err);
+            switch (error.response?.status) {   
+                case 400:
+                    var err = error.response.data as ValidationErrorResponse;
+                    setFormErrors(err);
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Internal server error, please try again later.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('An error occurred, please try again later.');
+                    setToastColor('danger');
+                    break;
             }
-            
         } finally {
             setLoading(false);
         }
@@ -114,6 +133,13 @@ const LoginForm: React.FC = () => {
                     Login
                 </IonButton>
             </form>
+            <IonToast
+                isOpen={toastOpen}
+                message={toastMessage}
+                color={toastColor}
+                onDidDismiss={() => setToastOpen(false)}
+                duration={5000}
+            ></IonToast>
         </IonCardContent>
     );
 };
