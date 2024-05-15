@@ -1,4 +1,4 @@
-import { IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCard, IonCardContent, IonCardSubtitle, IonCol, IonContent, IonFooter, IonHeader, IonIcon, IonImg, IonInput, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonList, IonLoading, IonModal, IonNote, IonPage, IonRow, IonSelect, IonSelectOption, IonThumbnail, IonTitle, IonToast, IonToggle, IonToolbar, useIonViewWillEnter } from '@ionic/react';
 import React, { useRef, useState } from 'react';
 import { AuthApi, Group, GroupApi, ValidationErrorResponse } from '../api';
 import { useApp } from '../context/AppContext';
@@ -21,6 +21,12 @@ const GroupUpdateForm: React.FC = () => {
     const [permiteTaskInValidation, setPerTInValidation] = useState<boolean>(true);
     const [requireRewardValidation, setReqRValidation] = useState<boolean>(true);
     const modal = useRef<HTMLIonModalElement>(null);
+
+    // Toast
+    const [toastOpen, setToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastColor, setToastColor] = useState<string>('success');
+
 
     const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
     const [formErrors, setFormErrors] = useState<ValidationErrorResponse>();
@@ -77,12 +83,32 @@ const GroupUpdateForm: React.FC = () => {
                 conf_r_valiadte: requireRewardValidation
             });
             
-            console.log("status:" + response.data.status + "| msg: " + response.data.message)
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             navigate.push("/group");
         } catch (error: any) {
-            if (error.response?.status == 400) {
-                var err = error.response.data as ValidationErrorResponse;
-                setFormErrors(err);
+            switch (error.response?.status) {
+                case 400:
+                    var err = error.response.data as ValidationErrorResponse;
+                    setFormErrors(err);
+                    break;
+                case 401:
+                    setToastOpen(true);
+                    setToastMessage('La sesión ha expirado, por favor inicia sesión nuevamente.');
+                    setToastColor('danger');
+                    navigate.push("/login");
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
             }
         } finally {
             setLoading(false);
@@ -96,10 +122,29 @@ const GroupUpdateForm: React.FC = () => {
             var api = new GroupApi(apiConf);
             const response = await api.deleteGroup();
             
-            console.log("status:" + response.data.status + "| msg: " + response.data.message)
+            setToastOpen(true);
+            setToastMessage(response.data.message!);
+            setToastColor('success');
             navigate.push("/group");
         } catch (error: any) {
-            console.log("error:" + error.response?.status )
+            switch (error.response?.status) {
+                case 401:
+                    setToastOpen(true);
+                    setToastMessage('La sesión ha expirado, por favor inicia sesión de nuevo.');
+                    setToastColor('danger');
+                    navigate.push("/login");
+                    break;
+                case 500:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
+                default:
+                    setToastOpen(true);
+                    setToastMessage('Algo ha ido mal, por favor intenta de nuevo.');
+                    setToastColor('danger');
+                    break;
+            }
         } finally {
             setLoading(false);
         }
@@ -123,12 +168,14 @@ const GroupUpdateForm: React.FC = () => {
                     <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
                     <form onSubmit={submit} >
                         <IonInput
+                            className={`${formErrors?.errors?.name ? 'ion-invalid ion-touched' : ''}`}
                             mode="md"
                             type="text"
                             fill="outline"
                             label="Group Name"
                             labelPlacement="floating"
                             onIonInput={(e) => setName(e.detail.value!)}
+                            errorText={`${formErrors?.errors?.name ?? ''} `}
                             value={name}
                             required
                         ></IonInput>
@@ -139,10 +186,12 @@ const GroupUpdateForm: React.FC = () => {
                             </IonItemDivider>
                             <IonItem>
                                 <IonInput
+                                    className={`${formErrors?.errors?.points_name ? 'ion-invalid ion-touched' : ''}`}
                                     mode="md"
                                     type="text"
                                     label="Points Name:"
                                     onIonInput={(e) => setPointsName(e.detail.value!)}
+                                    errorText={`${formErrors?.errors?.points_name ?? ''} `}
                                     placeholder="..."
                                     value={pointsName}
                                     required
@@ -183,8 +232,6 @@ const GroupUpdateForm: React.FC = () => {
                                 <IonToggle checked={requireRewardValidation} enableOnOffLabels={true} onIonChange={(e) => setReqRValidation(e.detail.checked!)}>Require Reward Validation</IonToggle>
                             </IonItem>
                         </IonItemGroup>
-                        <div>{formErrors?.errors?.toString() ?? null} </div>
-
 
                         <IonButton type='submit' expand="block" color='success' className="ion-margin-top" >
                             Update Group
@@ -220,6 +267,13 @@ const GroupUpdateForm: React.FC = () => {
                     </form>
                     </IonCol>
                 </IonRow>
+                <IonToast
+                    isOpen={toastOpen}
+                    message={toastMessage}
+                    color={toastColor}
+                    onDidDismiss={() => setToastOpen(false)}
+                    duration={5000}
+                ></IonToast>
             </IonContent>
         </IonPage>
     );
