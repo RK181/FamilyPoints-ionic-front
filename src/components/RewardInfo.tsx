@@ -62,7 +62,7 @@ const TaskInfo: React.FC<Props> = ({group, reward, redeem, validate, remove}) =>
                         },
                     ]}
                 />
-                {!reward.redeem && reward.user?.email == authEmail ? <IonButton color={'secondary'} onClick={() => redeem(reward.id!)}>Redeem</IonButton>
+                {!reward.redeem && reward.user?.email == authEmail ? <IonButton color={'success'} onClick={() => redeem(reward.id!)}>Redeem</IonButton>
                 :
                 reward.redeem && !reward.validate ? (reward.user?.email != authEmail || !group.conf_r_valiadte ? <IonButton color={'tertiary'} onClick={() => validate(reward.id!)}>Validate</IonButton> 
                                     : <p>Waiting validation</p>)
