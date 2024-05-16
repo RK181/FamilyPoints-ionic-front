@@ -273,6 +273,9 @@ const RewardList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
+                <IonRefresher slot="fixed" onIonRefresh={handleRefresh}>
+                    <IonRefresherContent></IonRefresherContent>
+                </IonRefresher>
                 <IonLoading className="custom-loading" isOpen={loading} message="Loading" spinner="circles" />
                 {rewardSearchList?.map((reward) => {
                     return (
