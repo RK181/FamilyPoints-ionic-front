@@ -1,8 +1,9 @@
-import { IonBackButton, IonButton, IonButtons, IonCardContent, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonTitle, IonToast, IonToolbar } from '@ionic/react';
+import { IonAlert, IonBackButton, IonButton, IonButtons, IonCardContent, IonContent, IonHeader, IonIcon, IonInput, IonLoading, IonPage, IonTitle, IonToast, IonToolbar, IonicSafeString, setupIonicReact } from '@ionic/react';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { useApp } from '../context/AppContext';
 import { ValidationErrorResponse, GroupApi, Group, User} from '../api';
+import { informationCircleOutline } from 'ionicons/icons';
 
 const GroupAddUserForm: React.FC = () => {
     const navigate = useHistory();
@@ -19,6 +20,12 @@ const GroupAddUserForm: React.FC = () => {
     const [toastOpen, setToastOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>('');
     const [toastColor, setToastColor] = useState<string>('success');
+    // Alert
+    const [showInformation, setShowInformation] = useState(false);
+    setupIonicReact({
+        // For nested html in alert message
+        innerHTMLTemplatesEnabled : true,
+    });
 
     const submit = async (event: any) => {
         setFormErrors(null);
@@ -94,6 +101,22 @@ const GroupAddUserForm: React.FC = () => {
                         <IonBackButton></IonBackButton>
                     </IonButtons>
                     <IonTitle>Invite User</IonTitle>
+                    <IonButton slot="end" color={'dark'} fill="clear" onClick={() => setShowInformation(true)}>
+                        <IonIcon icon={informationCircleOutline}></IonIcon>
+                    </IonButton>
+                    <IonAlert
+                        isOpen={showInformation}
+                        onDidDismiss={() => setShowInformation(false)}
+                        header="Info. Invite User to Group"
+                        message={new IonicSafeString(`
+                        <p>Invite a user to the group by entering their email.</p>
+                        <ul>
+                            <li><small><b>Email</b>: The email of the user to invite needs to be registered and verified.</small></li>
+                        </ul>
+                        <p><small>*The user will receive an email with a link to confirm the invitation.</small></p>
+                        `)}
+                        buttons={["Close"]}
+                    />
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
