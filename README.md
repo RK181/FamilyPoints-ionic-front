@@ -1,1 +1,1 @@
-# FamilyPoints Front-End with Ionic 7 and React
+# FamilyPoints Front-End (Ionic 7 + React)
