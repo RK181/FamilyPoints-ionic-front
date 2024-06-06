@@ -215,7 +215,7 @@ const GroupUpdateForm: React.FC = () => {
                         <ul>
                             <li><small><b>Require Task Approval</b>: If the tasks require approval of the couple.</small></li>
                             <li><small><b>Require Task Validation</b>: If the tasks require validation of the couple to receive points after completing the task.</small></li>
-                            <li><small><b>Permite Task Invalidation</b>: If the tasks can be invalidated by the couple.</small></li>
+                            <li><small><b>Allow Task Invalidation</b>: If the tasks can be invalidated by the couple.</small></li>
                             <li><small><b>Require Reward Validation</b>: If the rewards require validation of the couple to be redeemed.</small></li>
                         </ul>
                         `)}
@@ -287,7 +287,7 @@ const GroupUpdateForm: React.FC = () => {
                                 <IonToggle checked={requireTaskValidation} enableOnOffLabels={true} onIonChange={(e) => setReqTValidation(e.detail.checked!)}>Require Task Validation</IonToggle>
                             </IonItem>
                             <IonItem>
-                                <IonToggle checked={permiteTaskInValidation} enableOnOffLabels={true} onIonChange={(e) => setPerTInValidation(e.detail.checked!)}>Permite Task Invalidation</IonToggle>
+                                <IonToggle checked={permiteTaskInValidation} enableOnOffLabels={true} onIonChange={(e) => setPerTInValidation(e.detail.checked!)}>Allow Task Invalidation</IonToggle>
                             </IonItem>
                             <IonItem>
                                 <IonToggle checked={requireRewardValidation} enableOnOffLabels={true} onIonChange={(e) => setReqRValidation(e.detail.checked!)}>Require Reward Validation</IonToggle>
