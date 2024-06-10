@@ -201,7 +201,7 @@ const TaskList: React.FC = () => {
             case 'complete':
                 setSearchTaskList(taskList!.map(task => {
                     if (task.id === id) {
-                        if (group?.conf_t_validate === false) {
+                        if (group?.conf_t_validate == false) {
                             task.validate = true;
                         }
                         task.user!.email = authEmail; 
@@ -250,19 +250,19 @@ const TaskList: React.FC = () => {
     const filterList = (type: string) => {
         switch (type) {
             case 'myTasks':
-                setSearchTaskList(taskList!.filter((task) => task.user?.email === authEmail));
+                setSearchTaskList(taskList!.filter((task) => task.user?.email == authEmail));
                 break;
             case 'coupleTasks':
                 setSearchTaskList(taskList!.filter((task) => task.user?.email !== authEmail));
                 break;
             case 'waitApproval':
-                setSearchTaskList(taskList!.filter((task) => task.approve === false));
+                setSearchTaskList(taskList!.filter((task) => task.approve == false));
                 break;
             case 'waitComplete':
-                setSearchTaskList(taskList!.filter((task) => (task.approve === true && task.complete === false)));
+                setSearchTaskList(taskList!.filter((task) => (task.approve == true && task.complete == false)));
                 break;
             case 'waitValidate':
-                setSearchTaskList(taskList!.filter((task) => (task.approve === true && task.complete === true && task.validate === false)));
+                setSearchTaskList(taskList!.filter((task) => (task.approve == true && task.complete == true && task.validate == false)));
                 break;
             case 'all':
                 setSearchTaskList(taskList);
@@ -343,7 +343,7 @@ const TaskList: React.FC = () => {
                     return (
                         <IonAccordionGroup expand="inset" key={task.id}>
                             <IonAccordion>
-                                <IonItem slot="header" color={task.user?.email === authEmail ? "secondary" : group?.couple?.email === task.user?.email ? "light" : "medium"}>
+                                <IonItem slot="header" color={task.user?.email == authEmail ? "secondary" : group?.couple?.email == task.user?.email ? "light" : "medium"}>
                                     <IonLabel>
                                     <h3>{task.title}</h3>
                                     <small>Reward: {task.reward} <IonIcon src={getIcon(group?.points_icon!)}></IonIcon></small> <br/>

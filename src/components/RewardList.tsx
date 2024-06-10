@@ -151,7 +151,7 @@ const RewardList: React.FC = () => {
             case 'redeem':
                 setSearchRewardList(rewardList!.map(reward => {
                     if (reward.id === id) {
-                        if (group?.conf_r_valiadte === false){
+                        if (group?.conf_r_valiadte == false){
                             reward.validate = true;
                         }
                         reward.redeem = true;
